@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
@@ -7,23 +8,24 @@ namespace HubManagement.BuildingBlock.Infrastructure.Logging;
 
 public static class LoggingExtensions
 {
-    public static WebApplicationBuilder AddLogging(this WebApplicationBuilder builder)
+    public static IHostApplicationBuilder AddAppLogging(this IHostApplicationBuilder builder)
     {
-        builder.Host.UseSerilog((context, config) =>
+        builder.Services.AddSerilog((services, config) =>
         {
             config
-                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Configuration(builder.Configuration)
+                .ReadFrom.Services(services)
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
                 .Enrich.WithThreadId()
                 .Enrich.WithExceptionDetails()
-                .Enrich.WithProperty("Application", context.HostingEnvironment.ApplicationName)
-                .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName);
+                .Enrich.WithProperty("Application", builder.Environment.ApplicationName)
+                .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName);
         });
 
         return builder;
     }
-    
+
     public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app)
     {
         app.UseSerilogRequestLogging(options =>
@@ -35,7 +37,7 @@ public static class LoggingExtensions
 
                 return ex != null ? LogEventLevel.Error : LogEventLevel.Information;
             };
-            
+
             options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
             {
                 diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);

@@ -1,5 +1,6 @@
 ﻿using HealthChecks.Redis;
 using HubManagement.BuildingBlock.Infrastructure.Cache;
+using HubManagement.BuildingBlock.Infrastructure.Logging;
 using HubManagement.BuildingBlock.Infrastructure.Monitoring;
 using HubManagement.BuildingBlock.Infrastructure.Web.Cors;
 using HubManagement.BuildingBlock.Infrastructure.Web.Exceptions;
@@ -40,7 +41,7 @@ public static class Extensions
             options.Level = System.IO.Compression.CompressionLevel.Fastest;
         });
 
-        builder.Services.AddLogging();
+        builder.AddAppLogging();
         if (options.EnableOpenTelemetry)
         {
             builder.Services.AddAppOpenTelemetry(builder.Configuration);
@@ -101,6 +102,7 @@ public static class Extensions
 
         app.UseExceptionHandler();
         app.UseResponseCompression();
+        app.UseRequestLogging();
 
         // CORS MUST run before UseHttpsRedirection: preflight OPTIONS can't follow an HTTP→HTTPS redirect, so
         // the browser would block the call. Safe before routing because we use one global policy (no [EnableCors]).
