@@ -7,7 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HubManagement.Application\HubManagement.Application.csproj" />
+      <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
+      <ProjectReference Include="..\HubManagement.Infrastructure\HubManagement.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

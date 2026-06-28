@@ -1,41 +1,55 @@
+using System.Text.Json.Serialization;
+using HubManagement.Application;
+using HubManagement.BuildingBlock.Infrastructure;
+using HubManagement.BuildingBlock.Infrastructure.Messaging;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Configuration.Sources.Clear();
+
+builder.Configuration
+    .AddJsonFile("Configurations/appsettings.json", false, true)
+    .AddJsonFile(
+        $"Configurations/appsettings.{builder.Environment.EnvironmentName}.json",
+        true,
+        true)
+    .AddEnvironmentVariables();
+
+// Serialize enums as string names (reads still accept names or integers). [Flags] enums (AuditTag, BodyCapture)
+// opt back to numeric via their own NumericEnumConverter since comma-joined flag strings break bitwise consumers. Frontends mirror this as string unions.
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
+if (builder.Environment.IsProduction())
+{
+    static void Require(IConfiguration config, string key)
+    {
+        if (string.IsNullOrWhiteSpace(config[key]))
+        {
+            throw new InvalidOperationException($"Missing required configuration '{key}' in Production.");
+        }
+    }
+
+    var config = builder.Configuration;
+    Require(config, "PostGreSqlSetting:ConnectionString");
+    Require(config, "JwtOptions:SigningKey");
+}
+
+builder.AddPlatform(o =>
+{
+    o.EnableCaching = true;
+});
+
+builder.Services.AddHeroMessaging<IHubManagementApplicationMaker>(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UsePlatform();
 
-app.UseHttpsRedirection();
+app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
+    .WithTags("PlayGround")
+    .AllowAnonymous();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+await app.RunAsync();

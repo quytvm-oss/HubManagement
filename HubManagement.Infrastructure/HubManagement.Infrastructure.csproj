@@ -11,4 +11,12 @@
       <ProjectReference Include="..\HubManagement.BuildingBlock.Infrastructure\HubManagement.BuildingBlock.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Authentications\" />
+      <Folder Include="DbConfigurations\" />
+      <Folder Include="Installer\" />
+      <Folder Include="Repositories\" />
+      <Folder Include="SeedData\" />
+    </ItemGroup>
+
 </Project>

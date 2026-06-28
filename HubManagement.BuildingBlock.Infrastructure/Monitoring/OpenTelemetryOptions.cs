@@ -2,7 +2,7 @@
 
 public class OpenTelemetryOptions
 {
-    public string ServiceName { get; set; } = default!;
+    public string? ServiceName { get; set; }
 
-    public string Endpoint { get; set; } = default!;
+    public string? Endpoint { get; set; }
 }
