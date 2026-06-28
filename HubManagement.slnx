@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/BuildingBlocks/">
+    <Project Path="HubManagement.BuildingBlock.Core/HubManagement.BuildingBlock.Core.csproj" />
+    <Project Path="HubManagement.BuildingBlock.Infrastructure/HubManagement.BuildingBlock.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Host/">
+    <Project Path="HubManagement.WebApi/HubManagement.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="HubManagement.Application/HubManagement.Application.csproj" />
+    <Project Path="HubManagement.Domain/HubManagement.Domain.csproj" />
+    <Project Path="HubManagement.Infrastructure/HubManagement.Infrastructure.csproj" />
+  </Folder>
+</Solution>
