@@ -9,32 +9,51 @@ namespace HubManagement.BuildingBlock.Infrastructure.Messaging;
 
 public static class MessagingExtensions
 {
-    public static IServiceCollection AddHeroMessaging<TMarker>(this IServiceCollection services,
+    public static IServiceCollection AddHeroMessaging<TMarker>(
+        this IServiceCollection services,
         IConfiguration configuration)
     {
-        var dbSettings = configuration.GetSection(nameof(PostGreSqlSetting)).Get<PostGreSqlSetting>();
-        var options = configuration.GetSection(nameof(RebusOptions)).Get<RebusOptions>() ?? new RebusOptions();
+        var dbSettings = configuration
+            .GetSection(nameof(PostGreSqlSetting))
+            .Get<PostGreSqlSetting>();
+
+        var options = configuration
+            .GetSection(nameof(RebusOptions))
+            .Get<RebusOptions>() ?? new RebusOptions();
 
         services.AddRebus(config => config
             .Transport(t => t.UsePostgreSql(
                 connectionString: dbSettings?.ConnectionString,
                 tableName: options.MessagesTableName,
-                inputQueueName:  options.QueueName))
+                inputQueueName: options.QueueName))
             .Subscriptions(s => s.StoreInPostgres(
                 connectionString: dbSettings?.ConnectionString,
                 tableName: options.SubscriptionsTableName,
                 isCentralized: true))
-            .Routing(r => r.TypeBased()
-                .MapAssemblyOf<IIntegrationEvent>(options.QueueName))
+            .Routing(r =>
+            {
+                var routing = r.TypeBased();
+
+                var eventTypes = typeof(TMarker).Assembly
+                    .GetTypes()
+                    .Where(t =>
+                        t.IsClass &&
+                        !t.IsAbstract &&
+                        !t.IsGenericTypeDefinition &&
+                        typeof(IIntegrationEvent).IsAssignableFrom(t));
+
+                foreach (var eventType in eventTypes)
+                {
+                    routing.Map(eventType, options.QueueName);
+                }
+            })
             .Options(o =>
             {
                 o.SetNumberOfWorkers(options.NumberOfWorkers);
                 o.SetMaxParallelism(options.MaxParallelism);
             })
-            .Logging(l => l.Serilog())
-        );
+            .Logging(l => l.Serilog()));
 
-        // Auto scan + đăng ký tất cả handlers trong assembly hiện tại
         services.AutoRegisterHandlersFromAssemblyOf<TMarker>();
 
         return services;

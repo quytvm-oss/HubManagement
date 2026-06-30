@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using HubManagement.Application;
 using HubManagement.BuildingBlock.Infrastructure;
 using HubManagement.BuildingBlock.Infrastructure.Messaging;
+using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,10 @@ builder.AddPlatform(o =>
 });
 
 builder.Services.AddHeroMessaging<IHubManagementApplicationMaker>(builder.Configuration);
+
+builder.Services.AddMinimalEndpoints(
+    typeof(IHubManagementApplicationMaker).Assembly
+);
 
 var app = builder.Build();
 
