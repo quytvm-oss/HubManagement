@@ -9,12 +9,11 @@
     <ItemGroup>
       <ProjectReference Include="..\HubManagement.BuildingBlock.Core\HubManagement.BuildingBlock.Core.csproj" />
       <ProjectReference Include="..\HubManagement.BuildingBlock.Infrastructure\HubManagement.BuildingBlock.Infrastructure.csproj" />
+      <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Authentications\" />
-      <Folder Include="DbConfigurations\" />
-      <Folder Include="Installer\" />
       <Folder Include="Repositories\" />
       <Folder Include="SeedData\" />
     </ItemGroup>

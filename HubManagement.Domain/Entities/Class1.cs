@@ -1,5 +1,0 @@
-﻿namespace HubManagement.Domain.Entities;
-
-public class Class1
-{
-}
