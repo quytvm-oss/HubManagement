@@ -7,9 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Abstractions\" />
       <Folder Include="Features\" />
-      <Folder Include="Hub\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HubManagement.BuildingBlock.Core\HubManagement.BuildingBlock.Core.csproj" />
+      <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
     </ItemGroup>
 
 </Project>

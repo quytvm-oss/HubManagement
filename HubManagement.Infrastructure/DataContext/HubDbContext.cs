@@ -1,4 +1,5 @@
-﻿using HubManagement.BuildingBlock.Core.Common;
+﻿using HubManagement.Application.Contracts;
+using HubManagement.BuildingBlock.Core.Common;
 using HubManagement.BuildingBlock.Core.DbSettings;
 using HubManagement.BuildingBlock.Core.Domain;
 using HubManagement.Domain.Entities;
@@ -11,33 +12,24 @@ using Microsoft.Extensions.Options;
 
 namespace HubManagement.Infrastructure.DataContext;
 
-public class HubDbContext : IdentityDbContext<
-    ApplicationUser,
-    ApplicationRole,
-    string,
-    IdentityUserClaim<string>,
-    IdentityUserRole<string>,
-    IdentityUserLogin<string>,
-    ApplicationRoleClaim,
-    IdentityUserToken<string>,
-    IdentityUserPasskey<string>>
+public class HubDbContext(
+    DbContextOptions options,
+    IHostEnvironment environment,
+    IOptions<PostGreSqlSetting> settingOptions)
+    : IdentityDbContext<
+        ApplicationUser,
+        ApplicationRole,
+        string,
+        IdentityUserClaim<string>,
+        IdentityUserRole<string>,
+        IdentityUserLogin<string>,
+        ApplicationRoleClaim,
+        IdentityUserToken<string>,
+        IdentityUserPasskey<string>>(options), IApplicationDbContext
 {
-    private readonly IHostEnvironment _environment;
+    private readonly IHostEnvironment _environment = environment;
     
-    private readonly PostGreSqlSetting _settings;
-
-    public HubDbContext(DbContextOptions options, IHostEnvironment environment,
-        IOptions<PostGreSqlSetting> settingOptions) : base(options)
-    {
-        _environment = environment;
-        _settings = settingOptions.Value;
-    }
-
-    public HubDbContext(IHostEnvironment environment, PostGreSqlSetting settings)
-    {
-        _environment = environment;
-        _settings = settings;
-    }
+    private readonly PostGreSqlSetting _settings = settingOptions.Value;
 
     public DbSet<UserSession> UserSessions => Set<UserSession>();
     

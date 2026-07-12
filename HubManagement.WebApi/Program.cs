@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
 using HubManagement.Application;
+using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.BuildingBlock.Infrastructure;
 using HubManagement.BuildingBlock.Infrastructure.Messaging;
 using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
+using HubManagement.Infrastructure.Installers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,15 @@ if (builder.Environment.IsProduction())
     Require(config, "JwtOptions:SigningKey");
 }
 
+builder.Services.AddMediator(o =>
+{
+    o.ServiceLifetime = ServiceLifetime.Scoped;
+    o.Assemblies =
+    [
+        typeof(IHubManagementApplicationMaker),
+    ];
+});
+
 builder.AddPlatform(o =>
 {
     o.EnableCaching = true;
@@ -49,9 +60,19 @@ builder.Services.AddMinimalEndpoints(
     typeof(IHubManagementApplicationMaker).Assembly
 );
 
+builder.Services.ServicesRegisterExtensions();
+builder.Services.AddPersistence(builder.Configuration);
+
 var app = builder.Build();
 
 app.UsePlatform();
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    await initializer.MigrateAsync(CancellationToken.None);
+    await initializer.SeedAsync(CancellationToken.None);
+}
 
 app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
     .WithTags("PlayGround")

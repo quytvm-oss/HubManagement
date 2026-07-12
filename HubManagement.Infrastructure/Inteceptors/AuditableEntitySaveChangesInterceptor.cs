@@ -6,18 +6,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace HubManagement.Infrastructure.Inteceptors;
 
-public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
+public class AuditableEntitySaveChangesInterceptor(ICurrentUser currentUser, TimeProvider timeProvider)
+    : SaveChangesInterceptor
 {
-    private readonly ICurrentUser _currentUser;
-    private readonly TimeProvider _timeProvider;
-    
     private static readonly AsyncLocal<bool> _isSaving = new();
-
-    public AuditableEntitySaveChangesInterceptor(ICurrentUser currentUser, TimeProvider timeProvider)
-    {
-        _currentUser = currentUser;
-        _timeProvider = timeProvider;
-    }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -64,8 +56,8 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
         
-        var userId = _currentUser.IsAuthenticated() ? _currentUser.GetUserId().ToString() : null;
-        var now = _timeProvider.GetUtcNow();
+        var userId = currentUser.IsAuthenticated() ? currentUser.GetUserId().ToString() : null;
+        var now = timeProvider.GetUtcNow();
 
         foreach (var entry in context.ChangeTracker.Entries())
         {

@@ -7,15 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\HubManagement.Application\HubManagement.Application.csproj" />
       <ProjectReference Include="..\HubManagement.BuildingBlock.Core\HubManagement.BuildingBlock.Core.csproj" />
       <ProjectReference Include="..\HubManagement.BuildingBlock.Infrastructure\HubManagement.BuildingBlock.Infrastructure.csproj" />
-      <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Authentications\" />
-      <Folder Include="Repositories\" />
-      <Folder Include="SeedData\" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+      <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.9" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     </ItemGroup>
 
 </Project>

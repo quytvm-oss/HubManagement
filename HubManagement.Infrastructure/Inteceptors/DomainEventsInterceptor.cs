@@ -5,17 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace HubManagement.Infrastructure.Inteceptors;
 
-public class DomainEventsInterceptor : SaveChangesInterceptor
+public class DomainEventsInterceptor(IPublisher publisher, ILogger<DomainEventsInterceptor> logger)
+    : SaveChangesInterceptor
 {
-    private readonly IPublisher _publisher;
-    private readonly ILogger<DomainEventsInterceptor> _logger;
-
-    public DomainEventsInterceptor(IPublisher publisher, ILogger<DomainEventsInterceptor> logger)
-    {
-        _publisher = publisher;
-        _logger = logger;
-    }
-
     public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result,
         CancellationToken cancellationToken = new CancellationToken())
     {
@@ -35,22 +27,22 @@ public class DomainEventsInterceptor : SaveChangesInterceptor
         if (domainEvents.Length == 0)
             return await base.SavedChangesAsync(eventData, result, cancellationToken).ConfigureAwait(false);
 
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (logger.IsEnabled(LogLevel.Debug))
         {
-            _logger.LogDebug("Publishing {Count} domain events...", domainEvents.Length);
+            logger.LogDebug("Publishing {Count} domain events...", domainEvents.Length);
         }
 
         foreach (var domainEvent in domainEvents)
         {
             try
             {
-                await _publisher.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
+                await publisher.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
                 // Handler failures must not fail the already-committed save (events collected post-
                 // SaveChanges). Handlers needing guaranteed delivery should use the outbox pattern.
-                _logger.LogError(e, "Failed to publish domain event {EventType}", domainEvent.GetType().Name);
+                logger.LogError(e, "Failed to publish domain event {EventType}", domainEvent.GetType().Name);
             }
         }
         
