@@ -1,6 +1,7 @@
 ﻿using HealthChecks.Redis;
 using HubManagement.BuildingBlock.Infrastructure.Cache;
 using HubManagement.BuildingBlock.Infrastructure.Logging;
+using HubManagement.BuildingBlock.Infrastructure.Mailing;
 using HubManagement.BuildingBlock.Infrastructure.Monitoring;
 using HubManagement.BuildingBlock.Infrastructure.Web.Cors;
 using HubManagement.BuildingBlock.Infrastructure.Web.Exceptions;
@@ -66,10 +67,10 @@ public static class Extensions
 
         builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
         
-        // if (options.EnableMailing)
-        // {
-        //     builder.Services.AddAppMailing(builder.Configuration);
-        // }
+        if (options.EnableMailing)
+        {
+            builder.Services.AddAppMailing(builder.Configuration);
+        }
 
         if (options.EnableCaching)
         {

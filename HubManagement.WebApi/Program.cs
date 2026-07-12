@@ -53,6 +53,7 @@ builder.Services.AddMediator(o =>
 builder.AddPlatform(o =>
 {
     o.EnableCaching = true;
+    o.EnableMailing = true;
 });
 
 builder.Services.AddHeroMessaging<IHubManagementApplicationMaker>(builder.Configuration);
