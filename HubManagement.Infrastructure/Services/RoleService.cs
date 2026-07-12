@@ -55,9 +55,8 @@ public sealed class RoleService(
 
     public async Task<RoleDto?> GetRoleAsync(string id, CancellationToken cancellationToken = default)
     {
-        var role = await roleManager.Roles.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
-
-        _ = role ?? throw new NotFoundException("Role not found.");
+        var role = await roleManager.Roles.FirstOrDefaultAsync(r => r.Id == id, cancellationToken)
+                   ?? throw new NotFoundException("Role not found.");
 
         return new RoleDto() { Id = role.Id, Name = role.Name!, Description = role.Description, };
     }
@@ -71,20 +70,33 @@ public sealed class RoleService(
 
         if (role is not null)
         {
-            EnsureNotSystemRole(name, "System roles cannot be created or updated.");
-
-            EnsureNotSystemRole(name, "Cannot rename a role to a system role's name.");
+            // Protect the EXISTING role's identity — a system role must never be
+            // renamed/edited, regardless of what `name` the caller passes in.
+            EnsureNotSystemRole(role.Name, "System roles cannot be created or updated.");
 
             role.Name = name;
             role.Description = description;
-            await roleManager.UpdateAsync(role);
+
+            var updateResult = await roleManager.UpdateAsync(role);
+            if (!updateResult.Succeeded)
+            {
+                throw new CustomException("Update role failed",
+                    updateResult.Errors.Select(e => e.Description).ToList(), HttpStatusCode.BadRequest);
+            }
         }
         else
         {
+            // Protect against creating a NEW role that collides with a system role's name.
             EnsureNotSystemRole(name, "Cannot create a role using a system role's name.");
 
             role = new ApplicationRole(name, description);
-            await roleManager.CreateAsync(role);
+
+            var createResult = await roleManager.CreateAsync(role);
+            if (!createResult.Succeeded)
+            {
+                throw new CustomException("Create role failed",
+                    createResult.Errors.Select(e => e.Description).ToList(), HttpStatusCode.BadRequest);
+            }
         }
 
         return new RoleDto() { Id = role.Id, Name = role.Name!, Description = role.Description };
@@ -92,21 +104,25 @@ public sealed class RoleService(
 
     public async Task DeleteRoleAsync(string id, CancellationToken cancellationToken = default)
     {
-        ApplicationRole? role = await roleManager.FindByIdAsync(id);
-
-        _ = role ?? throw new NotFoundException("role not found");
+        ApplicationRole? role = await roleManager.FindByIdAsync(id)
+                                 ?? throw new NotFoundException("role not found");
 
         EnsureNotSystemRole(role.Name, "System roles cannot be deleted.");
 
-        await InvalidateAffectedUsersAsync(id, cancellationToken).ConfigureAwait(false);
+        var deleteResult = await roleManager.DeleteAsync(role);
+        if (!deleteResult.Succeeded)
+        {
+            throw new CustomException("Delete role failed",
+                deleteResult.Errors.Select(e => e.Description).ToList(), HttpStatusCode.BadRequest);
+        }
 
-        await roleManager.DeleteAsync(role);
+        // Only invalidate caches after the role is actually gone.
+        await InvalidateAffectedUsersAsync(id, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<RoleDto> GetWithPermissionsAsync(string id, CancellationToken cancellationToken = default)
     {
         var role = await GetRoleAsync(id, cancellationToken);
-        _ = role ?? throw new NotFoundException("role not found");
 
         role.Permissions = await context.RoleClaims
             .AsNoTracking()
@@ -124,15 +140,15 @@ public sealed class RoleService(
 
         var role = await roleManager.FindByIdAsync(roleId)
                    ?? throw new NotFoundException("role not found");
-        
+
         EnsureNotSystemRole(role.Name, "System role permissions are managed by the framework and cannot be modified.");
-        
+
         var currentClaims = await roleManager.GetClaimsAsync(role);
         await RemoveRevokedPermissionsAsync(role, currentClaims, permissions, cancellationToken);
         await AddNewPermissionsAsync(role, currentClaims, permissions, cancellationToken);
-        
+
         await InvalidateAffectedUsersAsync(roleId, cancellationToken).ConfigureAwait(false);
-        
+
         return "Permissions updated successfully.";
     }
 
@@ -146,23 +162,17 @@ public sealed class RoleService(
         }
     }
 
-    // Invalidate every user whose effective permissions may have shifted from a role mutation:
-    // direct holders (AspNetUserRoles) and group-derived holders (members of groups carrying this role).
+    // Invalidate every direct holder of this role (AspNetUserRoles) whose effective
+    // permissions may have shifted from a role mutation (permission change or role deletion).
     private async Task InvalidateAffectedUsersAsync(string roleId, CancellationToken cancellationToken)
     {
-        var role = await roleManager.FindByIdAsync(roleId);
-        if (role?.Name is null)
-        {
-            return;
-        }
-
         var directUserIds = await context.UserRoles
             .Where(ur => ur.RoleId == roleId)
             .Select(ur => ur.UserId)
+            .Distinct()
             .ToListAsync(cancellationToken);
-        
 
-        foreach (var userId in directUserIds.Distinct())
+        foreach (var userId in directUserIds)
         {
             await userPermissionService.InvalidatePermissionCacheAsync(userId, cancellationToken).ConfigureAwait(false);
         }
@@ -185,7 +195,7 @@ public sealed class RoleService(
             });
         }
 
-        if (newPermissions.Any())
+        if (newPermissions.Count > 0)
         {
             await context.SaveChangesAsync(cancellationToken);
         }
@@ -208,5 +218,5 @@ public sealed class RoleService(
         }
     }
 
-   #endregion
+    #endregion
 }

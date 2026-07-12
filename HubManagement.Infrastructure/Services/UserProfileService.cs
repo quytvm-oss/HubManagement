@@ -1,4 +1,5 @@
-﻿using HubManagement.Application.DTOs;
+﻿using System.Net;
+using HubManagement.Application.DTOs;
 using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.FileStorage;
@@ -6,7 +7,6 @@ using HubManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace HubManagement.Infrastructure.Services;
 
@@ -39,6 +39,7 @@ public class UserProfileService(
 
     public async Task<List<UserDto>> GetListAsync(CancellationToken ct = default)
     {
+        // TODO: pagination — deliberately left as-is for now.
         var users = await userManager.Users.AsNoTracking().ToListAsync(ct);
         var result = new List<UserDto>(users.Count);
 
@@ -61,7 +62,7 @@ public class UserProfileService(
     public Task<int> GetCountAsync(CancellationToken ct = default)
         => userManager.Users.AsNoTracking().CountAsync(ct);
 
-    public async  Task UpdateAsync(string userId, string firstName, string lastName, string phoneNumber, bool deleteCurrentImage,
+    public async Task UpdateAsync(string userId, string firstName, string lastName, string phoneNumber, bool deleteCurrentImage,
         CancellationToken ct = default)
     {
         var user = await userManager.FindByIdAsync(userId)
@@ -83,14 +84,22 @@ public class UserProfileService(
         user.FirstName = firstName;
         user.LastName = lastName;
 
+        var normalizedPhoneNumber = NormalizePhoneNumber(phoneNumber);
         var currentPhoneNumber = await userManager.GetPhoneNumberAsync(user);
-        if (phoneNumber != currentPhoneNumber)
+        if (normalizedPhoneNumber != currentPhoneNumber)
         {
-            await userManager.SetPhoneNumberAsync(user, phoneNumber);
+            await userManager.SetPhoneNumberAsync(user, normalizedPhoneNumber);
         }
 
         var result = await userManager.UpdateAsync(user);
-        
+        if (!result.Succeeded)
+        {
+            throw new CustomException(
+                "Update profile failed",
+                result.Errors.Select(e => e.Description).ToList(),
+                HttpStatusCode.BadRequest);
+        }
+
         await signInManager.RefreshSignInAsync(user);
     }
 
@@ -113,7 +122,7 @@ public class UserProfileService(
 
     public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null, CancellationToken ct = default)
     {
-        return await userManager.FindByEmailAsync(email.Normalize()) is { } user && user.Id != exceptId;
+        return await userManager.FindByEmailAsync(email.Trim()) is { } user && user.Id != exceptId;
     }
 
     public async Task<bool> ExistsWithNameAsync(string name, CancellationToken ct = default)
@@ -123,6 +132,29 @@ public class UserProfileService(
 
     public async Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, string? exceptId = null, CancellationToken ct = default)
     {
-        return await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber, ct) is { } user && user.Id != exceptId;
+        var normalized = NormalizePhoneNumber(phoneNumber);
+        return await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == normalized, ct) is { } user && user.Id != exceptId;
     }
+
+    #region internals
+
+    // Minimal E.164-ish normalization so the same number in different formats
+    // (e.g. "0901234567" vs "+84901234567") compares equal. Strips whitespace,
+    // dashes, and parens; keeps a leading "+" if present.
+    private static string NormalizePhoneNumber(string phoneNumber)
+    {
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+        {
+            return phoneNumber;
+        }
+
+        var trimmed = phoneNumber.Trim();
+        var hasLeadingPlus = trimmed.StartsWith('+');
+
+        var digits = new string(trimmed.Where(char.IsDigit).ToArray());
+
+        return hasLeadingPlus ? $"+{digits}" : digits;
+    }
+
+    #endregion
 }

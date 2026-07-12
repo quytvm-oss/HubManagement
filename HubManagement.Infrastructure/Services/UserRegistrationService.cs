@@ -226,39 +226,6 @@ public class UserRegistrationService(
         }
         return user;
     }
-    
-    // private async Task AssignDefaultRoleAndGroupsAsync(ApplicationUser user, string source, CancellationToken ct = default)
-    // {
-    //     await userManager.AddToRoleAsync(user, RoleConstants.Basic);
-    //     
-    //      var defaultGroups = await db.Groups.AsNoTracking()
-    //          .Where(g => g.IsDefault && !g.IsDeleted)
-    //          .ToListAsync(ct);
-    //     
-    //      foreach (var group in defaultGroups)
-    //      {
-    //          await db.UserGroups.AddAsync(UserGroup.Create(user.Id, group.Id, source),ct);
-    //      }
-    //
-    //      if (defaultGroups.Count > 0)
-    //      {
-    //          await db.SaveChangesAsync(ct);
-    //      }
-    // }
-
-    // private async Task PublishUserRegisteredAsync(ApplicationUser user,string source, CancellationToken cancellationToken = default)
-    // {
-    //     var tenantId = multiTenantContextAccessor.MultiTenantContext.TenantInfo?.Id;
-    //     user.RecordRegistered(tenantId,source);
-    //
-    //     await db.SaveChangesAsync(cancellationToken);
-    // }
-
-    // private void SendEmailConfirmation(User user, string origin)
-    // {
-    //     var tenantId = multiTenantContextAccessor.MultiTenantContext.TenantInfo?.Id;
-    //     user.RequestEmailConfirmation(tenantId!, origin);
-    // }
 
     #endregion
 }

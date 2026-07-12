@@ -4,7 +4,6 @@ using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.Domain.Entities;
 using HubManagement.Infrastructure.DataContext;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UAParser;
@@ -51,11 +50,7 @@ public class SessionService(
     public async Task<List<UserSessionDto>> GetUserSessionsAsync(string userId, CancellationToken cancellationToken = default)
     {
 
-        var currentUserId = currentUser.GetUserId().ToString();
-        if (!string.Equals(userId, currentUserId, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Cannot view sessions for another user");
-        }
+        EnsureOwnsSession(userId);
         
         var now = timeProvider.GetUtcNow().UtcDateTime;
         var sessions = await db.UserSessions
@@ -127,8 +122,12 @@ public class SessionService(
             .AsNoTracking()
             .Include(s => s.User)
             .FirstOrDefaultAsync(s => s.Id == sessionId, cancellationToken);
+        
+        if (session is null) return null;
 
-        return session is null ? null : MapToDto(session, isCurrentSession: false);
+        EnsureOwnsSession(session.UserId);
+
+        return MapToDto(session, isCurrentSession: false);
     }
 
     public async Task<bool> RevokeSessionAsync(Guid sessionId, string revokedBy, string? reason = null,
@@ -139,12 +138,7 @@ public class SessionService(
         
         if (session is null) return false;
         
-        var currentUserId = currentUser.GetUserId().ToString();
-
-        if (!string.Equals(session.UserId, currentUserId, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Cannot revoke sessions for another user");
-        }
+        EnsureOwnsSession(session.UserId);
         
         session.Revoke(revokedBy,reason ?? "User requested");
         
@@ -161,11 +155,7 @@ public class SessionService(
         CancellationToken cancellationToken = default)
     {
 
-        var currentUserId = currentUser.GetUserId().ToString();
-        if (!string.Equals(userId, currentUserId, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Cannot revoke sessions for another user");
-        }
+        EnsureOwnsSession(userId);
 
         var query = db.UserSessions
             .Where(s => s.UserId == userId && !s.IsRevoked);
@@ -311,6 +301,16 @@ public class SessionService(
     }
 
     #region internals
+    
+    
+    private void EnsureOwnsSession(string sessionOwnerUserId)
+    {
+        var currentUserId = currentUser.GetUserId().ToString();
+        if (!string.Equals(sessionOwnerUserId, currentUserId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new UnauthorizedAccessException("Cannot access sessions for another user");
+        }
+    }
     
     private UserSessionDto MapToDto(UserSession session, bool isCurrentSession)
     {

@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.Collections.ObjectModel;
+using System.Text;
 using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Exceptions;
+using HubManagement.BuildingBlock.Infrastructure.Mailing;
+using HubManagement.BuildingBlock.Infrastructure.Mailing.Abstractions;
 using HubManagement.Domain.Entities;
 using HubManagement.Infrastructure.DataContext;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +14,7 @@ namespace HubManagement.Infrastructure.Services;
 internal sealed class UserPasswordService(
     UserManager<ApplicationUser> userManager,
     HubDbContext db,
+    IMailService mailService,
     IPasswordExpiryService passwordExpiryService)  : IUserPasswordService
 {
     public async Task ForgotPasswordAsync(string email, string origin, CancellationToken ct = default)
@@ -32,6 +36,13 @@ internal sealed class UserPasswordService(
                 ["token"] = token,
                 ["email"] = email,
             });
+        
+        var mailRequest = new MailRequest(
+            new Collection<string> { user.Email },
+            "Reset Password",
+            $"Please reset your password using the following link: {resetPasswordUri}");
+        
+        await mailService.SendAsync(mailRequest, CancellationToken.None);
     }
 
     public async Task ResetPasswordAsync(string email, string password, string token, CancellationToken ct = default)
