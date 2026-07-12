@@ -6,12 +6,14 @@ namespace HubManagement.BuildingBlock.Infrastructure.FileStorage;
 
 public static class Extensions
 {
-    public static IServiceCollection AddHeroStorage(this IServiceCollection services, IConfiguration configuration)
+    private const string SectionName = "Storage";
+    
+    public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOptions<StorageOptions>().BindConfiguration(nameof(StorageOptions))
+        services.AddOptions<StorageOptions>().BindConfiguration(SectionName)
             .ValidateDataAnnotations().ValidateOnStart();
-        
-        var storageOptions = configuration.GetSection(nameof(StorageOptions)).Get<StorageOptions>() ?? new StorageOptions();
+
+        var storageOptions = configuration.GetSection(SectionName).Get<StorageOptions>() ?? new StorageOptions();
 
         switch (storageOptions.Provider?.Trim().ToLowerInvariant())
         {

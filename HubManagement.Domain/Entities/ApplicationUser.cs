@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HubManagement.Domain.Entities;
 
-public class ApplicationUser :  IdentityUser, IHasDomainEvents, IAuditableEntity, ISoftDeletable
+public class ApplicationUser :  IdentityUser, IHasDomainEvents
 {
     public string? FirstName { get; set; }
 
@@ -21,20 +21,6 @@ public class ApplicationUser :  IdentityUser, IHasDomainEvents, IAuditableEntity
 
     public DateTime LastPasswordChangeDateTime { get; set; } = TimeProvider.System.GetUtcNow().UtcDateTime;
     
-    public DateTimeOffset CreatedOnUtc { get; set; }
-
-    public string? CreatedBy { get; set; }
-
-    public DateTimeOffset? LastModifiedOnUtc { get; set; }
-
-    public string? LastModifiedBy { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    public DateTimeOffset? DeletedOnUtc { get; set; }
-
-    public string? DeletedBy { get; set; }
-    
     //navigation
     public virtual ICollection<UserDeviceToken> UserDeviceTokens { get; set; }
     
@@ -45,5 +31,17 @@ public class ApplicationUser :  IdentityUser, IHasDomainEvents, IAuditableEntity
     public void ClearDomainEvents() => _domainEvents.Clear();
     
     public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    
+    public void Activate(string? activityBy = null)
+    {
+        if (IsActive) return;
+        IsActive = true;
+    }
+
+    public void Deactivate(string? deactivatedBy = null, string? reason = null)
+    {
+        if (!IsActive) return;
+        IsActive = false;
+    }
 
 }

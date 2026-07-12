@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using HubManagement.Application;
 using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.BuildingBlock.Infrastructure;
+using HubManagement.BuildingBlock.Infrastructure.FileStorage;
 using HubManagement.BuildingBlock.Infrastructure.Messaging;
 using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 using HubManagement.Infrastructure.Installers;
@@ -60,6 +61,7 @@ builder.Services.AddMinimalEndpoints(
     typeof(IHubManagementApplicationMaker).Assembly
 );
 
+builder.Services.AddStorage(builder.Configuration);
 builder.Services.ServicesRegisterExtensions();
 builder.Services.AddPersistence(builder.Configuration);
 

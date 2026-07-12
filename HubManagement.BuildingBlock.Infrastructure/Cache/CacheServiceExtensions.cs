@@ -15,21 +15,23 @@ public static class CacheServiceExtensions
     /// <param name="ct">A cancellation token to observe while waiting for the operation to complete.</param>
     /// <returns>A task that represents the asynchronous operation, containing the cached or computed item of type T.</returns>
     public static async Task<T?> GetOrSetAsync<T>(this ICacheService cache, string key, Func<Task<T>> task,
-        TimeSpan? slidingExpiration = null, CancellationToken ct = default)
+        TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(cache);
-        
-        T? value = await cache.GetItemAsync<T>(key, ct);
-        
+
+        T? value = await cache.GetItemAsync<T>(key, cancellationToken);
+
         if (value is not null)
+        {
             return value;
-        
+        }
+
         ArgumentNullException.ThrowIfNull(task);
         value = await task();
 
         if (value is not null)
         {
-            await cache.SetItemAsync(key, value, slidingExpiration, ct);
+            await cache.SetItemAsync(key, value, slidingExpiration, cancellationToken);
         }
 
         return value;

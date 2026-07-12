@@ -2,7 +2,6 @@
 using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.Infrastructure.DataContext;
 using HubManagement.Infrastructure.Services;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -18,8 +17,24 @@ public static class ServicesExtensions
         services.AddScoped<IRequestContextService, RequestContextService>();
         services.AddScoped<IRequestContext>(sp => sp.GetRequiredService<IRequestContextService>());
         
+        // User services - focused single-responsibility services
+        services.AddTransient<IUserRegistrationService, UserRegistrationService>();
+        services.AddTransient<IUserProfileService, UserProfileService>();
+        services.AddTransient<IUserStatusService, UserStatusService>();
+        services.AddTransient<IUserRoleService, UserRoleService>();
+        services.AddTransient<IUserPasswordService, UserPasswordService>();
+        services.AddTransient<IUserPermissionService, UserPermissionService>();
+        
         // Facade for backward compatibility
         services.AddTransient<IUserService, UserService>();
+        
+        services.AddTransient<IRoleService, RoleService>();
+        
+        // Register password expiry service
+        services.AddScoped<IPasswordExpiryService, PasswordExpiryService>();
+
+        // Register session service and background cleanup
+        services.AddScoped<ISessionService, SessionService>();
         
         services.AddHealthChecks()
             .AddDbContextCheck<HubDbContext>(

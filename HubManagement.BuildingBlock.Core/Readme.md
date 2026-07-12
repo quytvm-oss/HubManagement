@@ -1,0 +1,1 @@
+dotnet ef migrations add Init-Project --project ../HubManagement.Infrastructure --startup-project . --output-dir DataContext/Migrations
