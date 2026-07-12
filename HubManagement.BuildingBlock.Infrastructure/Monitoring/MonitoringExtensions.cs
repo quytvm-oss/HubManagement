@@ -8,9 +8,11 @@ namespace HubManagement.BuildingBlock.Infrastructure.Monitoring;
 
 public static class MonitoringExtensions
 {
+    private const string SectionName = "OpenTelemetry";
+    
     public static IServiceCollection AddAppOpenTelemetry(this IServiceCollection services, IConfiguration configuration)
     {
-        var openTelemetryOptions = configuration.GetSection(nameof(OpenTelemetryOptions)).Get<OpenTelemetryOptions>();
+        var openTelemetryOptions = configuration.GetSection(SectionName).Get<OpenTelemetryOptions>();
         
         var serviceName = openTelemetryOptions?.ServiceName;
         var otlpEndpoint = openTelemetryOptions?.Endpoint!;
