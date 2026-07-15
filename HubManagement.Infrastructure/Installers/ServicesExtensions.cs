@@ -1,4 +1,5 @@
-﻿using HubManagement.Application.Services;
+﻿using HubManagement.Application.Contracts;
+using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.Infrastructure.DataContext;
 using HubManagement.Infrastructure.Services;
@@ -18,20 +19,12 @@ public static class ServicesExtensions
         services.AddScoped<IRequestContext>(sp => sp.GetRequiredService<IRequestContextService>());
         
         // User services - focused single-responsibility services
-        services.AddTransient<IUserRegistrationService, UserRegistrationService>();
-        services.AddTransient<IUserProfileService, UserProfileService>();
-        services.AddTransient<IUserStatusService, UserStatusService>();
-        services.AddTransient<IUserRoleService, UserRoleService>();
-        services.AddTransient<IUserPasswordService, UserPasswordService>();
         services.AddTransient<IUserPermissionService, UserPermissionService>();
         
         // Facade for backward compatibility
         services.AddTransient<IUserService, UserService>();
         
         services.AddTransient<IRoleService, RoleService>();
-        
-        // Register password expiry service
-        services.AddScoped<IPasswordExpiryService, PasswordExpiryService>();
 
         // Register session service and background cleanup
         services.AddScoped<ISessionService, SessionService>();
@@ -41,6 +34,7 @@ public static class ServicesExtensions
                 name: "db:hubmanagement",
                 failureStatus: HealthStatus.Unhealthy);
         services.AddScoped<IDbInitializer, HubDbInitializer>();
+        services.AddScoped<IApplicationDbContext, HubDbContext>();
         
         return services;
     }

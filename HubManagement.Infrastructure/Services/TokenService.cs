@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using HubManagement.Application.DTOs;
 using HubManagement.Application.Services;
-using HubManagement.BuildingBlock.Infrastructure.Authorization.jwt;
+using HubManagement.Infrastructure.Authorizations.jwt;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

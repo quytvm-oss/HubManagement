@@ -1,5 +1,5 @@
-﻿using HubManagement.BuildingBlock.Infrastructure.Authorization.jwt;
-using HubManagement.Infrastructure.Authorizations;
+﻿using HubManagement.Infrastructure.Authorizations;
+using HubManagement.Infrastructure.Authorizations.jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

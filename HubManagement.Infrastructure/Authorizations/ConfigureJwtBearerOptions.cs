@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using HubManagement.BuildingBlock.Core.Exceptions;
-using HubManagement.BuildingBlock.Infrastructure.Authorization.jwt;
+using HubManagement.Infrastructure.Authorizations.jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

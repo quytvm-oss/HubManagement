@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Features\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\HubManagement.BuildingBlock.Core\HubManagement.BuildingBlock.Core.csproj" />
+      <ProjectReference Include="..\HubManagement.BuildingBlock.Infrastructure\HubManagement.BuildingBlock.Infrastructure.csproj" />
       <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
     </ItemGroup>
 

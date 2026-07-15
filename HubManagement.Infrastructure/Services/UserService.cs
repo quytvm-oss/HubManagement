@@ -1,83 +1,103 @@
 ﻿using System.Security.Claims;
 using HubManagement.Application.DTOs;
 using HubManagement.Application.Services;
+using HubManagement.BuildingBlock.Core.Exceptions;
+using HubManagement.BuildingBlock.Infrastructure.Authorization;
+using HubManagement.BuildingBlock.Infrastructure.Cache;
+using HubManagement.BuildingBlock.Infrastructure.Cache.Abstractions;
+using HubManagement.Domain.Entities;
+using HubManagement.Infrastructure.DataContext;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HubManagement.Infrastructure.Services;
 
 internal sealed class UserService(
-    IUserRegistrationService registrationService,
-    IUserProfileService profileService,
-    IUserStatusService statusService,
-    IUserRoleService roleService,
-    IUserPasswordService passwordService,
-    IUserPermissionService permissionService) : IUserService
+    UserManager<ApplicationUser> userManager,
+    RoleManager<ApplicationRole> roleManager,
+    HubDbContext db,
+    ICacheService cache) : IUserService
 {
-    public Task<bool> ExistsWithNameAsync(string name, CancellationToken ct = default)
-        => profileService.ExistsWithNameAsync(name, ct);
+    public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null, CancellationToken ct = default)
+    {
+        return await userManager.FindByEmailAsync(email.Trim()) is { } user && user.Id != exceptId;
+    }
 
-    public Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null, CancellationToken ct = default)
-        => profileService.ExistsWithEmailAsync(email, exceptId, ct);
+    public async Task<bool> ExistsWithNameAsync(string name, CancellationToken ct = default)
+    {
+        return await userManager.FindByNameAsync(name) is not null;
+    }
 
-    public Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, string? exceptId = null, CancellationToken ct = default)
-        => profileService.ExistsWithPhoneNumberAsync(phoneNumber, exceptId, ct);
+    public async Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, string? exceptId = null, CancellationToken ct = default)
+    {
+        var normalized = NormalizePhoneNumber(phoneNumber);
+        return await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == normalized, ct) is { } user && user.Id != exceptId;
+    }
 
-    public Task<List<UserDto>> GetListAsync(CancellationToken ct = default)
-        => profileService.GetListAsync(ct);
+    public async Task<List<string>?> GetPermissionsAsync(string userId, CancellationToken ct = default)
+    {
+        var permissions = await cache.GetOrSetAsync(
+            GetPermissionCacheKey(userId),
+            async () =>
+            {
+                var user = await userManager.FindByIdAsync(userId);
 
-    public Task<int> GetCountAsync(CancellationToken ct = default)
-        => profileService.GetCountAsync(ct);
+                _ = user ?? throw new UnauthorizedException();
 
-    public Task<UserDto> GetAsync(string userId, CancellationToken ct = default)
-        => profileService.GetAsync(userId, ct);
+                var userRoles = await userManager.GetRolesAsync(user);
+                var permissions = new List<string>();
+                foreach (var role in await roleManager.Roles
+                             .Where(r => userRoles.Contains(r.Name!))
+                             .ToListAsync(ct))
+                {
+                    permissions.AddRange(await db.RoleClaims
+                        .Where(rc => rc.RoleId == role.Id && rc.ClaimType == ClaimConstants.Permission)
+                        .Select(rc => rc.ClaimValue!)
+                        .ToListAsync(ct));
+                }
+                return permissions.Distinct().ToList();
+            },
+            cancellationToken: ct);
 
-    public Task ToggleStatusAsync(bool activateUser, string userId, CancellationToken ct = default)
-    => statusService.ToggleStatusAsync(activateUser, userId, ct);
+        return permissions;
+    }
 
-    public Task<string> GetOrCreateFromPrincipalAsync(ClaimsPrincipal principal, CancellationToken ct = default)
-    => registrationService.GetOrCreateFromPrincipalAsync(principal, ct);
+    public async Task<bool> HasPermissionAsync(string userId, string permissionName, CancellationToken ct = default)
+    {
+        var permissions = await GetPermissionsAsync(userId, ct);
 
-    public Task<string> RegisterAsync(string firstName, string lastName, string email, string userName, string password,
-        string confirmPassword, string phoneNumber, string origin, CancellationToken ct = default)
-    => registrationService.RegisterAsync(firstName, lastName, email, userName, password, confirmPassword, phoneNumber, origin, ct);
+        return permissions?.Contains(permissionName) ?? false;
+    }
 
-    // public Task UpdateAsync(string userId, string firstName, string lastName, string phoneNumber, StreamUploadRequest image,
-    //     bool deleteCurrentImage, CancellationToken ct = default)
-    // => profileService.UpdateAsync(userId, firstName, lastName, phoneNumber, image, deleteCurrentImage, ct);
+    public Task InvalidatePermissionCacheAsync(string userId, CancellationToken cancellationToken)
+    {
+        return cache.RemoveItemAsync(GetPermissionCacheKey(userId), cancellationToken);
+    }
+    
+    public static string GetPermissionCacheKey(string userId)
+    {
+        return $"perm:{userId}";
+    }
 
-    public Task DeleteAsync(string userId, CancellationToken ct = default)
-    => statusService.DeleteAsync(userId, ct);
+    #region internals
 
-    public Task<string> ConfirmEmailAsync(string userId, string code, string tenant, CancellationToken ct = default)
-        => registrationService.ConfirmEmailAsync(userId, code, tenant, ct);
+    // Minimal E.164-ish normalization so the same number in different formats
+    // (e.g. "0901234567" vs "+84901234567") compares equal. Strips whitespace,
+    // dashes, and parens; keeps a leading "+" if present.
+    private static string NormalizePhoneNumber(string phoneNumber)
+    {
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+        {
+            return phoneNumber;
+        }
 
-    public Task AdminConfirmEmailAsync(string userId, CancellationToken ct = default)
-    => registrationService.AdminConfirmEmailAsync(userId, ct);
+        var trimmed = phoneNumber.Trim();
+        var hasLeadingPlus = trimmed.StartsWith('+');
 
-    public Task ResendConfirmationEmailAsync(string userId, string origin, CancellationToken ct = default)
-        => registrationService.ResendConfirmationEmailAsync(userId, origin, ct);
+        var digits = new string(trimmed.Where(char.IsDigit).ToArray());
 
-    public Task<string> ConfirmPhoneNumberAsync(string userId, string code, CancellationToken cancellationToken = default)
-    => registrationService.ConfirmPhoneNumberAsync(userId, code, cancellationToken);
+        return hasLeadingPlus ? $"+{digits}" : digits;
+    }
 
-    public Task<bool> HasPermissionAsync(string userId, string permissionName, CancellationToken ct = default)
-    => permissionService.HasPermissionAsync(userId, permissionName, ct);
-
-    public Task ForgotPasswordAsync(string email, string origin, CancellationToken cancellationToken)
-    => passwordService.ForgotPasswordAsync(email, origin, cancellationToken);
-
-    public Task ResetPasswordAsync(string email, string password, string token, CancellationToken cancellationToken)
-    => passwordService.ResetPasswordAsync(email, password, token, cancellationToken);
-
-    public Task<List<string>?> GetPermissionsAsync(string userId, CancellationToken cancellationToken)
-    => permissionService.GetPermissionsAsync(userId, cancellationToken);
-
-    public Task ChangePasswordAsync(string password, string newPassword, string confirmNewPassword, string userId,
-        CancellationToken cancellationToken = default)
-    => passwordService.ChangePasswordAsync(password, newPassword, confirmNewPassword, userId, cancellationToken);
-
-    public Task<string> AssignRolesAsync(string userId, List<UserRoleDto> userRoles, CancellationToken cancellationToken)
-    => roleService.AssignRoleAsync(userId, userRoles, cancellationToken);
-
-    public Task<List<UserRoleDto>> GetUserRolesAsync(string userId, CancellationToken cancellationToken)
-   => roleService.GetUserRolesAsync(userId, cancellationToken);
+    #endregion
 }
