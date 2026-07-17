@@ -1,8 +1,8 @@
-using System.ComponentModel;
+using HubManagement.Application.Constants;
 using HubManagement.Application.DTOs;
+using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 using Mediator;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,8 +15,7 @@ public class GenerateTokenEndpoint : IMinimalEndpointDefinition
 {
     public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
     {
-         builder.MapPost("/api/v1/token/issue",
-                [AllowAnonymous] async Task<Results<Ok<TokenResponse>, UnauthorizedHttpResult, ProblemHttpResult>>
+         builder.MapPost("/api/v1/token/issue", async Task<Results<Ok<TokenResponse>, UnauthorizedHttpResult, ProblemHttpResult>>
                 ([FromBody] GenerateTokenCommand command,
                     [FromServices] IMediator mediator,
                     CancellationToken ct) =>
@@ -26,6 +25,7 @@ public class GenerateTokenEndpoint : IMinimalEndpointDefinition
                     return TypedResults.Ok(token);
                 })
             .WithName("IssueJwtTokens")
+            .RequirePermission(Permission.NameFor(ActionConstants.Create,ResourceConstants.User))
             .WithSummary("Issue JWT access and refresh tokens")
             .WithDescription("Submit credentials to receive a JWT access token and a refresh token. Provide the 'tenant' header to select the tenant context (defaults to 'root'). The 'X-FSH-App' header (admin|dashboard) is used to enforce the SuperAdmin / dashboard boundary.")
             .Produces<TokenResponse>(StatusCodes.Status200OK)

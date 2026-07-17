@@ -1,6 +1,7 @@
 ﻿using HubManagement.Infrastructure.Authorization;
 using HubManagement.Infrastructure.Authorization.jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -36,8 +37,9 @@ public static class JwtAuthenticationExtensions
             //     .RequirePermission(...) was never evaluated and any authenticated tenant
             //     member could perform gated writes. Both must point at the permission policy.
             options.DefaultPolicy = options.GetPolicy(RequiredPermissionDefaults.PolicyName)!;
-            //options.FallbackPolicy = options.GetPolicy(RequiredPermissionDefaults.PolicyName);
+            options.FallbackPolicy = options.GetPolicy(RequiredPermissionDefaults.PolicyName);
         });
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler, PathAwareAuthorizationHandler>();
         
         return services;
     }

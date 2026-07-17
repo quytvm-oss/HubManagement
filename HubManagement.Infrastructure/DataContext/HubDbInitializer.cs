@@ -1,7 +1,7 @@
-﻿using HubManagement.BuildingBlock.Core.Abstractions;
+﻿using HubManagement.Application.Constants;
+using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using HubManagement.Domain.Entities;
-using HubManagement.Infrastructure.Authorization.Constants;
 using HubManagement.Infrastructure.SeedData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

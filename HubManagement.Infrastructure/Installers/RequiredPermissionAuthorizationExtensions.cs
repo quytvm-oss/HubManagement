@@ -21,7 +21,7 @@ public static class RequiredPermissionAuthorizationExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        return builder.AddRequirements();
+        return builder.AddRequirements(new PermissionAuthorizationRequirement());
     }
 
     public static AuthorizationBuilder AddRequiredPermissionPolicy(this AuthorizationBuilder builder)

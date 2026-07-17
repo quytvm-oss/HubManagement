@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace HubManagement.Infrastructure.Authorization.Constants;
+namespace HubManagement.Application.Constants;
 
 public static class RoleConstants
 {

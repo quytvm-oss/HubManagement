@@ -1,4 +1,4 @@
-﻿namespace HubManagement.Infrastructure.Authorization.Constants;
+﻿namespace HubManagement.Application.Constants;
 
 // https://github.com/fullstackhero/dotnet-starter-kit/blob/develop/src/BuildingBlocks/Shared/Identity/ActionConstants.cs
 public static class ActionConstants

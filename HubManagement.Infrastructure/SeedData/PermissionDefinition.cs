@@ -1,4 +1,4 @@
-﻿using HubManagement.Infrastructure.Authorization.Constants;
+﻿using HubManagement.Application.Constants;
 
 namespace HubManagement.Infrastructure.SeedData;
 

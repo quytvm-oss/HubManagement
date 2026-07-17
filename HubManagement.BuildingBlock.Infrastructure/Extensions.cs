@@ -134,9 +134,9 @@ public static class Extensions
             app.UseAppOpenApi();
         }
 
-        //app.UseAuthentication();
+        app.UseAuthentication();
 
-        // app.UseAuthorization();
+        app.UseAuthorization();
         return app;
     }
     
