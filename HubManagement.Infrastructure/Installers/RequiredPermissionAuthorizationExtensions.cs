@@ -1,4 +1,4 @@
-﻿using HubManagement.Infrastructure.Authorizations;
+﻿using HubManagement.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

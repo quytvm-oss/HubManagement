@@ -1,4 +1,4 @@
-﻿namespace HubManagement.Infrastructure.Authorizations;
+﻿namespace HubManagement.Infrastructure.Authorization;
 
 public class PasswordPolicyOptions
 {

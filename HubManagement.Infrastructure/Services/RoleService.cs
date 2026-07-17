@@ -7,6 +7,7 @@ using HubManagement.BuildingBlock.Core.Common;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using HubManagement.Domain.Entities;
+using HubManagement.Infrastructure.Authorization.Constants;
 using HubManagement.Infrastructure.DataContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

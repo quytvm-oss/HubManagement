@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HubManagement.Infrastructure.Authorizations.jwt;
+namespace HubManagement.Infrastructure.Authorization.jwt;
 
 public class JwtOptions : IValidatableObject
 {

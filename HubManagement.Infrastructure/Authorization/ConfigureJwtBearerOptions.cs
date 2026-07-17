@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using HubManagement.BuildingBlock.Core.Exceptions;
-using HubManagement.Infrastructure.Authorizations.jwt;
+using HubManagement.Infrastructure.Authorization.jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HubManagement.Infrastructure.Authorizations;
+namespace HubManagement.Infrastructure.Authorization;
 
 public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions>
 {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace HubManagement.BuildingBlock.Infrastructure.Authorization;
+namespace HubManagement.Infrastructure.Authorization.Constants;
 
 public static class RoleConstants
 {
     public const string Admin = nameof(Admin);
-    public const string User = nameof(User);
+    public const string Basic = nameof(Basic);
 
     /// <summary>
     /// The base roles provided by the framework.
@@ -13,7 +13,7 @@ public static class RoleConstants
     public static IReadOnlyList<string> DefaultRoles { get; } = new ReadOnlyCollection<string>(new[]
     {
         Admin,
-        User
+        Basic
     });
 
     /// <summary>

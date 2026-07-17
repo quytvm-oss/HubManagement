@@ -3,7 +3,7 @@ using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
-namespace HubManagement.Infrastructure.Authorizations;
+namespace HubManagement.Infrastructure.Authorization;
 
 public class RequiredPermissionAuthorizationHandler(IUserService userService) : AuthorizationHandler<PermissionAuthorizationRequirement>
 {

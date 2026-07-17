@@ -1,4 +1,4 @@
-﻿namespace HubManagement.BuildingBlock.Infrastructure.Authorization;
+﻿namespace HubManagement.Infrastructure.Authorization.Constants;
 
 // https://github.com/fullstackhero/dotnet-starter-kit/blob/develop/src/BuildingBlocks/Shared/Identity/ActionConstants.cs
 public static class ActionConstants
@@ -11,5 +11,24 @@ public static class ActionConstants
     public const string Export = nameof(Export);
     public const string Generate = nameof(Generate);
     public const string Clean = nameof(Clean);
-    public const string UpgradeSubscription = nameof(UpgradeSubscription);
+    
+    public static IReadOnlyList<string> Crud { get; } =
+    [
+        View,
+        Create,
+        Update,
+        Delete
+    ];
+
+    public static IReadOnlyList<string> All { get; } =
+    [
+        View,
+        Search,
+        Create,
+        Update,
+        Delete,
+        Export,
+        Generate,
+        Clean
+    ];
 }
