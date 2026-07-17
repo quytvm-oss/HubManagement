@@ -108,7 +108,7 @@ public class HubDbInitializer(
         };
 
         logger.LogInformation("Seeding system account");
-        var result = await userManager.CreateAsync(systemAccount, "123456Aa@");
+        var result = await userManager.CreateAsync(systemAccount, "123456789Aa@");
 
         if (result.Succeeded)
         {

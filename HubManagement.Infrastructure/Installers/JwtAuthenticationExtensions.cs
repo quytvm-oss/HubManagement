@@ -8,7 +8,7 @@ namespace HubManagement.Infrastructure.Installers;
 
 public static class JwtAuthenticationExtensions
 {
-    internal static IServiceCollection ConfigureJwtAuth(this IServiceCollection services)
+    public static IServiceCollection ConfigureJwtAuth(this IServiceCollection services)
     {
         services.AddOptions<JwtOptions>()
             .BindConfiguration(nameof(JwtOptions))

@@ -35,6 +35,8 @@ public static class ServicesExtensions
                 failureStatus: HealthStatus.Unhealthy);
         services.AddScoped<IDbInitializer, HubDbInitializer>();
         services.AddScoped<IApplicationDbContext, HubDbContext>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IIdentityService, IdentityService>();
         
         return services;
     }

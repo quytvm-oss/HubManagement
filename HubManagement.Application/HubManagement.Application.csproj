@@ -12,4 +12,8 @@
       <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\Tokens\" />
+    </ItemGroup>
+
 </Project>

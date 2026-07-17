@@ -66,9 +66,13 @@ builder.Services.AddStorage(builder.Configuration);
 builder.Services.ServicesRegisterExtensions();
 builder.Services.AddPersistence(builder.Configuration);
 
+builder.Services.ConfigureJwtAuth();
+
 var app = builder.Build();
 
 app.UsePlatform();
+
+app.MapMinimalEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
