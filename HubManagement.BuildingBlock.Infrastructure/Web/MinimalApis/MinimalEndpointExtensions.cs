@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,12 +37,21 @@ public static class MinimalEndpointExtensions
     public static IEndpointRouteBuilder MapMinimalEndpoints(
         this IEndpointRouteBuilder builder)
     {
+        var apiVersionSet = builder.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(1))
+            .ReportApiVersions()
+            .Build();
+
+        var apiGroup = builder
+            .MapGroup("/api/v{version:apiVersion}")
+            .WithApiVersionSet(apiVersionSet);
+
         var endpoints = builder.ServiceProvider
             .GetServices<IMinimalEndpointDefinition>();
 
         foreach (var endpoint in endpoints)
         {
-            endpoint.MapEndpoint(builder);
+            endpoint.MapEndpoint(apiGroup);
         }
 
         return builder;

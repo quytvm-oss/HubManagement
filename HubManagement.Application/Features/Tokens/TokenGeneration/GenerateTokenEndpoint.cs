@@ -1,6 +1,4 @@
-using HubManagement.Application.Constants;
 using HubManagement.Application.DTOs;
-using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -11,11 +9,11 @@ using Microsoft.AspNetCore.Routing;
 
 namespace HubManagement.Application.Features.Tokens.TokenGeneration;
 
-public class GenerateTokenEndpoint : IMinimalEndpointDefinition
+internal static class GenerateTokenEndpoint
 {
-    public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
+    public static RouteHandlerBuilder MapGenerateToken(this IEndpointRouteBuilder builder)
     {
-         builder.MapPost("/api/v1/token/issue",
+         return builder.MapPost("/token/issue",
                  [AllowAnonymous] 
                  async Task<Results<Ok<TokenResponse>, UnauthorizedHttpResult, ProblemHttpResult>>
                 ([FromBody] GenerateTokenCommand command,
@@ -34,7 +32,5 @@ public class GenerateTokenEndpoint : IMinimalEndpointDefinition
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
-         
-         return builder;
     }
 }

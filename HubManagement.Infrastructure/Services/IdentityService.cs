@@ -37,7 +37,7 @@ public class IdentityService(
         return (user.Id, claims);
     }
 
-    public async Task<(string Subject, IEnumerable<Claim> Claims)?> 
+    public async Task<(Guid Subject, IEnumerable<Claim> Claims)?> 
         ValidateRefreshTokenAsync(string refreshToken, CancellationToken ct = default)
     {
         var user = await FindUserByRefreshTokenAsync(refreshToken, ct);
@@ -46,7 +46,7 @@ public class IdentityService(
         ValidateUserStatus(user);
 
         var claims = await BuildUserClaimsAsync(user, ct);
-        return (user.Id.ToString(), claims);
+        return (user.Id, claims);
     }
 
     public async Task StoreRefreshTokenAsync(string subject, string refreshToken, DateTime expiresAtUtc, CancellationToken ct = default)
