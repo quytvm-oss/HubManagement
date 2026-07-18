@@ -34,6 +34,8 @@ public class HubDbContext(
     public DbSet<UserSession> UserSessions => Set<UserSession>();
     
     public DbSet<UserDeviceToken> UserDeviceTokens => Set<UserDeviceToken>();
+
+    public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
     
     
     /// <summary>

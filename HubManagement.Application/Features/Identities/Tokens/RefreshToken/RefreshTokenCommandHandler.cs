@@ -8,7 +8,7 @@ using HubManagement.BuildingBlock.Core.Exceptions;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
-namespace HubManagement.Application.Features.Tokens.RefreshToken;
+namespace HubManagement.Application.Features.Identities.Tokens.RefreshToken;
 
 public class RefreshTokenCommandHandler(
     ITokenService tokenService,

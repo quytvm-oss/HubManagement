@@ -1,4 +1,5 @@
 ﻿using HubManagement.Application.Constants;
+using HubManagement.Application.Contracts;
 using HubManagement.BuildingBlock.Core.Abstractions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using HubManagement.Domain.Entities;
@@ -15,6 +16,7 @@ public class HubDbInitializer(
     HubDbContext context,
     RoleManager<ApplicationRole> roleManager,
     UserManager<ApplicationUser> userManager,
+    IApplicationDbContext db,
     TimeProvider timeProvider,
     IConfiguration configuration) : IDbInitializer
 {
@@ -34,6 +36,7 @@ public class HubDbInitializer(
     {
         await SeedRolesAsync(cancellationToken);
         await SeedAdminUserAsync(cancellationToken);
+        await SeedEmailTemplateAsync(cancellationToken);
     }
 
     private async Task SeedRolesAsync(CancellationToken cancellationToken)
@@ -122,4 +125,26 @@ public class HubDbInitializer(
             
         }
     }
+
+    private async Task SeedEmailTemplateAsync(CancellationToken cancellationToken = default)
+    {
+        var existingTypes = await db.EmailTemplates
+            .IgnoreQueryFilters()
+            .Select(x => x.Type)
+            .ToHashSetAsync(cancellationToken);
+
+        var templatesToAdd = SystemEmailTemplates.All
+            .Where(x => !existingTypes.Contains(x.Type))
+            .ToList();
+
+        if (templatesToAdd.Count == 0)
+            return;
+
+        await db.EmailTemplates.AddRangeAsync(
+            templatesToAdd,
+            cancellationToken);
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+    
 }

@@ -1,6 +1,6 @@
 ﻿using Mediator;
 
-namespace HubManagement.Application.Features.Tokens.RefreshToken;
+namespace HubManagement.Application.Features.Identities.Tokens.RefreshToken;
 
 public record RefreshTokenCommand(string? Token, string RefreshToken) : ICommand<RefreshTokenCommandResponse>;
 

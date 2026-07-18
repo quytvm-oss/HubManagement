@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace HubManagement.Application.Features.Tokens.RefreshToken;
+namespace HubManagement.Application.Features.Identities.Tokens.RefreshToken;
 
 public class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenCommand>
 {

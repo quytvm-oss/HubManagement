@@ -7,6 +7,7 @@ using HubManagement.BuildingBlock.Infrastructure.Web.Cors;
 using HubManagement.BuildingBlock.Infrastructure.Web.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Web.Mediator.Behaviors;
 using HubManagement.BuildingBlock.Infrastructure.Web.OpenApi;
+using HubManagement.BuildingBlock.Infrastructure.Web.Origin;
 using HubManagement.BuildingBlock.Infrastructure.Web.Security;
 using HubManagement.BuildingBlock.Infrastructure.Web.Versioning;
 using Mediator;
@@ -85,6 +86,7 @@ public static class Extensions
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddProblemDetails();
+        builder.Services.AddOptions<OriginOptions>().BindConfiguration(nameof(OriginOptions));
         builder.Services.AddOptions<SecurityHeadersOptions>().BindConfiguration(nameof(SecurityHeadersOptions));
 
         return builder;

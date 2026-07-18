@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using HubManagement.Application.DTOs;
@@ -7,7 +6,7 @@ using HubManagement.BuildingBlock.Core.Abstractions;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
-namespace HubManagement.Application.Features.Tokens.TokenGeneration;
+namespace HubManagement.Application.Features.Identities.Tokens.TokenGeneration;
 
 public class GenerateTokenCommandHandler(
     IIdentityService identityService,

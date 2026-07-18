@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Tokens.TokenGeneration;
+namespace HubManagement.Application.Features.Identities.Tokens.TokenGeneration;
 
 internal static class GenerateTokenEndpoint
 {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Tokens.RefreshToken;
+namespace HubManagement.Application.Features.Identities.Tokens.RefreshToken;
 
 public static class RefreshTokenEndpoint
 {
