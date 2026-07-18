@@ -11,4 +11,5 @@
     <Project Path="HubManagement.Domain/HubManagement.Domain.csproj" />
     <Project Path="HubManagement.Infrastructure/HubManagement.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Tests/" />
 </Solution>

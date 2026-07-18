@@ -58,6 +58,8 @@ builder.AddPlatform(o =>
 
 builder.Services.AddHeroMessaging<IHubManagementApplicationMaker>(builder.Configuration);
 
+builder.Services.AddBackgroundJob();
+
 builder.Services.AddMinimalEndpoints(
     typeof(IHubManagementApplicationMaker).Assembly
 );

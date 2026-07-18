@@ -1,0 +1,23 @@
+﻿using Mediator;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+
+namespace HubManagement.Application.Features.Identities.Users.ConfirmEmail;
+
+public static class ConfirmEmailEndpoint
+{
+    internal static RouteHandlerBuilder MapConfirmEmailEndpoint(this IEndpointRouteBuilder endpoints)
+    {
+        return endpoints.MapGet("/confirm-email", async (Guid userId, string code, IMediator mediator, CancellationToken cancellationToken) =>
+            {
+                var result = await mediator.Send(new ConfirmEmailCommand(userId, code), cancellationToken);
+                return TypedResults.Ok(result);
+            })
+            .WithName("ConfirmEmail")
+            .WithSummary("Confirm user email")
+            .WithDescription("Confirm a user's email address.")
+            .AllowAnonymous()
+            .Produces(StatusCodes.Status200OK);
+    }
+}

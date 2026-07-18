@@ -23,7 +23,6 @@ public class GenerateTokenCommandHandler(
 
         var ip = requestContext.IpAddress ?? "unknown";
         var ua = requestContext.UserAgent ?? "unknown";
-        var clientId = requestContext.ClientId ;
 
         var identityResult = await identityService
             .ValidateCredentialsAsync(command.Email, command.Password, command.TwoFactorCode, cancellationToken);

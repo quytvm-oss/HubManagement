@@ -1,14 +1,16 @@
 ﻿using HubManagement.Application.Services;
+using HubManagement.BuildingBlock.Infrastructure.Web.Origin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace HubManagement.Infrastructure.Services;
 
 public class RequestContextService(
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    IOptions<OriginOptions> originOptions)
     : IRequestContextService
 {
-    //private readonly Uri? _originUrl = originOptions.Value.OriginUrl;
+    private readonly Uri? _originUrl = originOptions.Value.OriginUrl;
 
     public string? IpAddress  
         => httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
@@ -28,10 +30,10 @@ public class RequestContextService(
     {
         get
         {
-            // if (_originUrl is not null)
-            // {
-            //     return _originUrl.AbsoluteUri.TrimEnd('/');
-            // }
+            if (_originUrl is not null)
+            {
+                return _originUrl.AbsoluteUri.TrimEnd('/');
+            }
 
             var request = httpContextAccessor.HttpContext?.Request;
             if (request is not null && !string.IsNullOrWhiteSpace(request.Scheme) && request.Host.HasValue)

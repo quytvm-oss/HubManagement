@@ -30,23 +30,25 @@ public static class MessagingExtensions
                 connectionString: dbSettings?.ConnectionString,
                 tableName: options.SubscriptionsTableName,
                 isCentralized: true))
-            .Routing(r =>
-            {
-                var routing = r.TypeBased();
-
-                var eventTypes = typeof(TMarker).Assembly
-                    .GetTypes()
-                    .Where(t =>
-                        t.IsClass &&
-                        !t.IsAbstract &&
-                        !t.IsGenericTypeDefinition &&
-                        typeof(IIntegrationEvent).IsAssignableFrom(t));
-
-                foreach (var eventType in eventTypes)
-                {
-                    routing.Map(eventType, options.QueueName);
-                }
-            })
+            .Routing(r => r.TypeBased()
+                .MapFallback(options.QueueName)) 
+            // .Routing(r =>
+            // {
+            //     var routing = r.TypeBased();
+            //
+            //     var eventTypes = typeof(TMarker).Assembly
+            //         .GetTypes()
+            //         .Where(t =>
+            //             t.IsClass &&
+            //             !t.IsAbstract &&
+            //             !t.IsGenericTypeDefinition &&
+            //             typeof(IIntegrationEvent).IsAssignableFrom(t));
+            //
+            //     foreach (var eventType in eventTypes)
+            //     {
+            //         routing.Map(eventType, options.QueueName);
+            //     }
+            // })
             .Options(o =>
             {
                 o.SetNumberOfWorkers(options.NumberOfWorkers);
