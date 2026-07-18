@@ -81,8 +81,4 @@ using (var scope = app.Services.CreateScope())
     await initializer.SeedAsync(CancellationToken.None);
 }
 
-app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
-    .WithTags("PlayGround")
-    .AllowAnonymous();
-
 await app.RunAsync();

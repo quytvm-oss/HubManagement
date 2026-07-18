@@ -4,7 +4,7 @@ namespace HubManagement.Application.Services;
 
 public interface IIdentityService
 {
-    Task<(string Subject, IEnumerable<Claim> Claims)?>
+    Task<(Guid Subject, IEnumerable<Claim> Claims)?>
         ValidateCredentialsAsync(string email, string password, string? twoFactorCode = null, CancellationToken ct = default);
     
     Task<(string Subject, IEnumerable<Claim> Claims)?>

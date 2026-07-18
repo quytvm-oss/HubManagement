@@ -5,7 +5,7 @@ namespace HubManagement.Application.Services;
 public interface ISessionService
 {
     Task<UserSessionDto> CreateSessionAsync(
-        string userId,
+        Guid userId,
         string refreshTokenHash,
         string ipAddress,
         string userAgent,
@@ -13,11 +13,11 @@ public interface ISessionService
         CancellationToken cancellationToken = default);
 
     Task<List<UserSessionDto>> GetUserSessionsAsync(
-        string userId,
+        Guid userId,
         CancellationToken cancellationToken = default);
 
     Task<List<UserSessionDto>> GetUserSessionsForAdminAsync(
-        string userId,
+        Guid userId,
         CancellationToken cancellationToken = default);
     
     Task<(List<UserSessionDto> Items, long TotalCount)> GetTenantSessionsAsync(
@@ -38,14 +38,14 @@ public interface ISessionService
         CancellationToken cancellationToken = default);
 
     Task<int> RevokeAllSessionsAsync(
-        string userId,
+        Guid userId,
         string revokedBy,
         Guid? exceptSessionId = null,
         string? reason = null,
         CancellationToken cancellationToken = default);
 
     Task<int> RevokeAllSessionsForAdminAsync(
-        string userId,
+        Guid userId,
         string revokedBy,
         string? reason = null,
         CancellationToken cancellationToken = default);

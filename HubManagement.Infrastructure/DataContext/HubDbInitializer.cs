@@ -67,6 +67,7 @@ public class HubDbInitializer(
             {
                 RoleId = role.Id,
                 ClaimType = ClaimConstants.Permission,
+                Description = permission.Description,
                 ClaimValue = permission.Name,
                 CreatedBy = "application",
                 CreatedOn = timeProvider.GetUtcNow()
@@ -91,18 +92,19 @@ public class HubDbInitializer(
     private async Task SeedAdminUserAsync(CancellationToken cancellationToken)
     {
         var systemAccount = await userManager.Users
-            .IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == SystemPermissions.AdminId.ToString(), cancellationToken);
+            .IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == SystemPermissions.AdminId, cancellationToken);
 
         if (systemAccount != null) return;
 
         systemAccount = new ApplicationUser()
         {
-            Id = SystemPermissions.AdminId.ToString(),
+            Id = SystemPermissions.AdminId,
             UserName = "admin",
             FirstName = "Admin",
             LastName = "System",
             Email = "admin@mail.com",
             PhoneNumberConfirmed = true,
+            EmailConfirmed = true,
             IsActive = true,
             SecurityStamp = Guid.NewGuid().ToString(),
         };

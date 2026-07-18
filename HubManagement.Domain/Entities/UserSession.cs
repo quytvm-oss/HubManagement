@@ -6,7 +6,7 @@ public class UserSession : IHasDomainEvents
 {
     public Guid Id { get; private set; }
 
-    public string UserId { get; set; } = default!;
+    public Guid UserId { get; set; } = default!;
 
     public string RefreshTokenHash { get; private set; } = default!;
 
@@ -50,7 +50,7 @@ public class UserSession : IHasDomainEvents
     public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
     
     public static UserSession Create(
-        string userId,
+        Guid userId,
         string refreshTokenHash,
         string ipAddress,
         string userAgent,

@@ -5,23 +5,13 @@ namespace HubManagement.Infrastructure.SeedData;
 
 public static class SystemPermissions
 {
-    public static IReadOnlyList<Permission> Admin { get; } = PermissionDefinitions.Definitions
-            .SelectMany(definition => definition.Actions,
-                (definition, action) => new Permission(
-                    action,
-                    definition.Resource))
-            .ToArray();
+    public static IReadOnlyList<Permission> Admin { get; } = PermissionConstant.All;
     
-    public static IReadOnlyList<Permission> Basic { get; } = new PermissionDefinition[]
-    {
-        new(
-        
-            ResourceConstants.User,
-            [ActionConstants.View , ActionConstants.Search]
-        )
-    }.SelectMany(x => x.Actions.Select(y => new Permission(y, x.Resource))).ToArray();
-    
-    
+    public static IReadOnlyList<Permission> Basic { get; } = 
+    [
+        new("View Users",          ActionConstants.View,   PermissionConstant.Users.Resource),
+        new("Search Users",        ActionConstants.Search, PermissionConstant.Users.Resource),
+    ];
     
     public static readonly Guid AdminId = Guid.Parse("4316048C-6CE2-4D86-AFE6-F021895CB872");
 

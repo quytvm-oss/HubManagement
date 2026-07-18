@@ -18,7 +18,7 @@ public class IdentityService(
     HubDbContext dbContext,
     UserManager<ApplicationUser> userManager) : IIdentityService
 {
-    public async Task<(string Subject, IEnumerable<Claim> Claims)?> 
+    public async Task<(Guid Subject, IEnumerable<Claim> Claims)?> 
         ValidateCredentialsAsync(string email, string password, string? twoFactorCode = null,
         CancellationToken ct = default)
     {
@@ -46,15 +46,20 @@ public class IdentityService(
         ValidateUserStatus(user);
 
         var claims = await BuildUserClaimsAsync(user, ct);
-        return (user.Id, claims);
+        return (user.Id.ToString(), claims);
     }
 
     public async Task StoreRefreshTokenAsync(string subject, string refreshToken, DateTime expiresAtUtc, CancellationToken ct = default)
     {
+        if (!Guid.TryParse(subject, out var userId))
+        {
+            throw new UnauthorizedException("Invalid user id.");
+        }
+        
         var hashRefreshToken = HashToken(refreshToken);
 
         var resultUpdated = await dbContext.Users
-            .Where(u => u.Id == subject)
+            .Where(u => u.Id == userId)
             .ExecuteUpdateAsync(s => s.SetProperty(u => u.RefreshToken, hashRefreshToken)
                 .SetProperty(u => u.RefreshTokenExpireTime, expiresAtUtc), ct);
         
@@ -75,9 +80,14 @@ public class IdentityService(
         BuildClaimsForUserAsync(string userId,  CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(userId);
+        if (!Guid.TryParse(userId, out var userIdStandard))
+        {
+            throw new UnauthorizedException("Invalid user id.");
+        }
+        
         
         var user = await userManager.Users
-            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+            .FirstOrDefaultAsync(u => u.Id == userIdStandard, ct);
         
         if (user is null)
             return null;
@@ -86,7 +96,7 @@ public class IdentityService(
         
         var claims =  await BuildUserClaimsAsync(user, ct);
         
-        return (user.Id, claims);   
+        return (user.Id.ToString(), claims);   
     }
 
     #region internals method
@@ -215,10 +225,10 @@ public class IdentityService(
         return
         [
             new(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString()),
-            new(JwtRegisteredClaimNames.Sub, user.Id),
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new(JwtRegisteredClaimNames.Name, fullName.Length > 0 ? fullName : (user.Email ?? string.Empty)),
-            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Email, user.Email!),
             new(ClaimTypes.Name, user.FirstName ?? string.Empty),
             new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),

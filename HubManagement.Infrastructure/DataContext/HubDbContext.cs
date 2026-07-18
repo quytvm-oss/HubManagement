@@ -19,13 +19,13 @@ public class HubDbContext(
     : IdentityDbContext<
         ApplicationUser,
         ApplicationRole,
-        string,
-        IdentityUserClaim<string>,
-        IdentityUserRole<string>,
-        IdentityUserLogin<string>,
+        Guid,
+        IdentityUserClaim<Guid>,
+        IdentityUserRole<Guid>,
+        IdentityUserLogin<Guid>,
         ApplicationRoleClaim,
-        IdentityUserToken<string>,
-        IdentityUserPasskey<string>>(options), IApplicationDbContext
+        IdentityUserToken<Guid>,
+        IdentityUserPasskey<Guid>>(options), IApplicationDbContext
 {
     private readonly IHostEnvironment _environment = environment;
     

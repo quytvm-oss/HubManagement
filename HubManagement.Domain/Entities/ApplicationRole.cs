@@ -2,7 +2,7 @@
 
 namespace HubManagement.Domain.Entities;
 
-public sealed class ApplicationRole : IdentityRole
+public sealed class ApplicationRole : IdentityRole<Guid>
 {
     public string? Description { get; set; }
     

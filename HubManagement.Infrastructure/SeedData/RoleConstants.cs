@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace HubManagement.Application.Constants;
+namespace HubManagement.Infrastructure.SeedData;
 
 public static class RoleConstants
 {

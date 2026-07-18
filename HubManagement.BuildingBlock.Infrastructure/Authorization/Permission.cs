@@ -1,6 +1,6 @@
 ﻿namespace HubManagement.BuildingBlock.Infrastructure.Authorization;
 
-public record Permission(string Action, string Resource)
+public record Permission(string Description, string Action, string Resource)
 {
     public string Name => NameFor(Action, Resource);
 

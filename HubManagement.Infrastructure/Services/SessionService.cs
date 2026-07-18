@@ -19,7 +19,7 @@ public class SessionService(
 {
     private readonly Parser _uaParser = Parser.GetDefault();
 
-    public async Task<UserSessionDto> CreateSessionAsync(string userId, string refreshTokenHash, string ipAddress, string userAgent, DateTime expiresAt,
+    public async Task<UserSessionDto> CreateSessionAsync(Guid userId, string refreshTokenHash, string ipAddress, string userAgent, DateTime expiresAt,
         CancellationToken cancellationToken = default)
     {
         var clientInfo = _uaParser.Parse(userAgent);
@@ -47,7 +47,7 @@ public class SessionService(
         return MapToDto(session, isCurrentSession: false);
     }
 
-    public async Task<List<UserSessionDto>> GetUserSessionsAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<List<UserSessionDto>> GetUserSessionsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
 
         EnsureOwnsSession(userId);
@@ -61,7 +61,7 @@ public class SessionService(
         return sessions.Select(x => MapToDto(x,isCurrentSession: false)).ToList();
     }
 
-    public async Task<List<UserSessionDto>> GetUserSessionsForAdminAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<List<UserSessionDto>> GetUserSessionsForAdminAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         
         var now = timeProvider.GetUtcNow().UtcDateTime;
@@ -151,7 +151,7 @@ public class SessionService(
         return true;
     }
 
-    public async Task<int> RevokeAllSessionsAsync(string userId, string revokedBy, Guid? exceptSessionId = null, string? reason = null,
+    public async Task<int> RevokeAllSessionsAsync(Guid userId, string revokedBy, Guid? exceptSessionId = null, string? reason = null,
         CancellationToken cancellationToken = default)
     {
 
@@ -182,7 +182,7 @@ public class SessionService(
         return sessions.Count;
     }
 
-    public async Task<int> RevokeAllSessionsForAdminAsync(string userId, string revokedBy, string? reason = null,
+    public async Task<int> RevokeAllSessionsForAdminAsync(Guid userId, string revokedBy, string? reason = null,
         CancellationToken cancellationToken = default)
     {
 
@@ -303,12 +303,11 @@ public class SessionService(
     #region internals
     
     
-    private void EnsureOwnsSession(string sessionOwnerUserId)
+    private void EnsureOwnsSession(Guid sessionOwnerUserId)
     {
-        var currentUserId = currentUser.GetUserId().ToString();
-        if (!string.Equals(sessionOwnerUserId, currentUserId, StringComparison.OrdinalIgnoreCase))
+        if (sessionOwnerUserId != currentUser.GetUserId())
         {
-            throw new UnauthorizedAccessException("Cannot access sessions for another user");
+            throw new UnauthorizedAccessException("Cannot access sessions for another user.");
         }
     }
     

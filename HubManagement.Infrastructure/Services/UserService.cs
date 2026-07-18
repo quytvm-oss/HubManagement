@@ -18,7 +18,7 @@ internal sealed class UserService(
     HubDbContext db,
     ICacheService cache) : IUserService
 {
-    public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null, CancellationToken ct = default)
+    public async Task<bool> ExistsWithEmailAsync(string email, Guid? exceptId = null, CancellationToken ct = default)
     {
         return await userManager.FindByEmailAsync(email.Trim()) is { } user && user.Id != exceptId;
     }
@@ -28,7 +28,7 @@ internal sealed class UserService(
         return await userManager.FindByNameAsync(name) is not null;
     }
 
-    public async Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, string? exceptId = null, CancellationToken ct = default)
+    public async Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, Guid? exceptId = null, CancellationToken ct = default)
     {
         var normalized = NormalizePhoneNumber(phoneNumber);
         return await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == normalized, ct) is { } user && user.Id != exceptId;

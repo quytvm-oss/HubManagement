@@ -11,13 +11,13 @@ public interface IRoleService
         string? search = null,
         CancellationToken cancellationToken = default);
     
-    Task<RoleDto?> GetRoleAsync(string id, CancellationToken cancellationToken = default);
+    Task<RoleDto?> GetRoleAsync(Guid id, CancellationToken cancellationToken = default);
     
-    Task<RoleDto> CreateOrUpdateRoleAsync(string roleId, string name, string description, CancellationToken cancellationToken = default);
+    Task<RoleDto> CreateOrUpdateRoleAsync(Guid roleId, string name, string description, CancellationToken cancellationToken = default);
     
-    Task DeleteRoleAsync(string id, CancellationToken cancellationToken = default);
+    Task DeleteRoleAsync(Guid id, CancellationToken cancellationToken = default);
     
-    Task<RoleDto> GetWithPermissionsAsync(string id, CancellationToken cancellationToken = default);
+    Task<RoleDto> GetWithPermissionsAsync(Guid id, CancellationToken cancellationToken = default);
     
-    Task<string> UpdatePermissionsAsync(string roleId, List<string> permissions, CancellationToken cancellationToken = default);
+    Task<string> UpdatePermissionsAsync(Guid roleId, List<string> permissions, CancellationToken cancellationToken = default);
 }

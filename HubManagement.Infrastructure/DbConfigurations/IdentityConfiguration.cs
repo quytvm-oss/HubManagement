@@ -35,36 +35,36 @@ public class ApplicationRoleClaimConfiguration : IEntityTypeConfiguration<Applic
     }
 }
 
-public class IdentityUserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<string>>
+public class IdentityUserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<Guid>>
 {
-    public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder)
+    public void Configure(EntityTypeBuilder<IdentityUserRole<Guid>> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.ToTable("UserRoles");
     }
 }
 
-public class IdentityUserClaimConfiguration : IEntityTypeConfiguration<IdentityUserClaim<string>>
+public class IdentityUserClaimConfiguration : IEntityTypeConfiguration<IdentityUserClaim<Guid>>
 {
-    public void Configure(EntityTypeBuilder<IdentityUserClaim<string>> builder)
+    public void Configure(EntityTypeBuilder<IdentityUserClaim<Guid>> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.ToTable("UserClaims");   
     }
 }
 
-public class IdentityUserLoginConfiguration : IEntityTypeConfiguration<IdentityUserLogin<string>>
+public class IdentityUserLoginConfiguration : IEntityTypeConfiguration<IdentityUserLogin<Guid>>
 {
-    public void Configure(EntityTypeBuilder<IdentityUserLogin<string>> builder)
+    public void Configure(EntityTypeBuilder<IdentityUserLogin<Guid>> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.ToTable("UserLogins");  
     }
 }
 
-public class IdentityUserTokenConfiguration : IEntityTypeConfiguration<IdentityUserToken<string>>
+public class IdentityUserTokenConfiguration : IEntityTypeConfiguration<IdentityUserToken<Guid>>
 {
-    public void Configure(EntityTypeBuilder<IdentityUserToken<string>> builder)
+    public void Configure(EntityTypeBuilder<IdentityUserToken<Guid>> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         builder.ToTable("UserTokens"); 

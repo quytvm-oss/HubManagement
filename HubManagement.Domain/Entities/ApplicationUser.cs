@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HubManagement.Domain.Entities;
 
-public class ApplicationUser :  IdentityUser, IHasDomainEvents
+public class ApplicationUser :  IdentityUser<Guid>, IHasDomainEvents
 {
     public string? FirstName { get; set; }
 

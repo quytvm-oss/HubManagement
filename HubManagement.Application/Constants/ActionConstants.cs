@@ -9,8 +9,8 @@ public static class ActionConstants
     public const string Update = nameof(Update);
     public const string Delete = nameof(Delete);
     public const string Export = nameof(Export);
-    public const string Generate = nameof(Generate);
-    public const string Clean = nameof(Clean);
+    public const string ViewAll = nameof(ViewAll);
+    public const string Revoke = nameof(Revoke);
     
     public static IReadOnlyList<string> Crud { get; } =
     [
@@ -28,7 +28,7 @@ public static class ActionConstants
         Update,
         Delete,
         Export,
-        Generate,
-        Clean
+        Revoke,
+        ViewAll
     ];
 }

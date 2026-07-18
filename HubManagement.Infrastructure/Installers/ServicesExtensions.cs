@@ -23,8 +23,6 @@ public static class ServicesExtensions
         
         // Facade for backward compatibility
         services.AddTransient<IUserService, UserService>();
-        
-        services.AddTransient<IRoleService, RoleService>();
 
         // Register session service and background cleanup
         services.AddScoped<ISessionService, SessionService>();

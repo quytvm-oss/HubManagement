@@ -39,9 +39,9 @@ public class GenerateTokenCommandHandler(
         
         
         // Issue token
-        var token = await tokenService.IssueAsync(subject, claims, cancellationToken);
+        var token = await tokenService.IssueAsync(subject.ToString(), claims, cancellationToken);
         
-        await identityService.StoreRefreshTokenAsync(subject, token.RefreshToken, token.RefreshTokenExpiresAt, cancellationToken);
+        await identityService.StoreRefreshTokenAsync(subject.ToString(), token.RefreshToken, token.RefreshTokenExpiresAt, cancellationToken);
         
         // Create user session for session management (non-blocking, fail gracefully)
         try
