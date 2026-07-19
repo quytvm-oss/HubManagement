@@ -3,6 +3,7 @@ using HubManagement.BuildingBlock.Core.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rebus.Config;
+using Rebus.Config.Outbox;
 using Rebus.Routing.TypeBased;
 
 namespace HubManagement.BuildingBlock.Infrastructure.Messaging;
@@ -30,8 +31,10 @@ public static class MessagingExtensions
                 connectionString: dbSettings?.ConnectionString,
                 tableName: options.SubscriptionsTableName,
                 isCentralized: true))
-            .Routing(r => r.TypeBased()
-                .MapFallback(options.QueueName)) 
+            .Outbox(o => o.StoreInPostgreSql(
+                connectionString: dbSettings?.ConnectionString,
+                tableName: options.OutboxTableName))
+            .Routing(r => r.TypeBased().MapFallback(options.QueueName))
             // .Routing(r =>
             // {
             //     var routing = r.TypeBased();

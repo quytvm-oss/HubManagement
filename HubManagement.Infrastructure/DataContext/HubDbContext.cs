@@ -7,8 +7,12 @@ using HubManagement.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Npgsql;
+using Rebus.Config.Outbox;
+using Rebus.Transport;
 
 namespace HubManagement.Infrastructure.DataContext;
 
@@ -37,7 +41,6 @@ public class HubDbContext(
 
     public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
     
-    
     /// <summary>
     /// Configures the model and its relationships by applying global filters, tenant isolation,
     /// and other customization logic during the model creation stage of the database context.
@@ -51,5 +54,28 @@ public class HubDbContext(
         base.OnModelCreating(modelBuilder);
         modelBuilder.AppendGlobalQueryFilter<ISoftDeletable>(QueryFilters.SoftDelete, s => !s.IsDeleted);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(HubDbContext).Assembly);
+    }
+    
+    public async Task ExecuteTransactionalAsync(Func<Task> operation, CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+
+        using var scope = new RebusTransactionScope();
+        scope.UseOutbox(
+            connection: (NpgsqlConnection)Database.GetDbConnection(),
+            transaction: (NpgsqlTransaction)transaction.GetDbTransaction());
+
+        try
+        {
+            await operation();
+
+            await scope.CompleteAsync();
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

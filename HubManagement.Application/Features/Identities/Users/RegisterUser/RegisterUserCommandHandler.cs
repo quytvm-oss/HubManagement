@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using HubManagement.Application.Constants;
+using HubManagement.Application.Contracts;
 using HubManagement.Application.IntegrationEvents;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.Domain.Entities;
@@ -9,7 +10,8 @@ using Rebus.Bus;
 
 namespace HubManagement.Application.Features.Identities.Users.RegisterUser;
 
-public class RegisterUserCommandHandler(UserManager<ApplicationUser> userManager, IBus bus)
+public class RegisterUserCommandHandler(UserManager<ApplicationUser> userManager, IBus bus, 
+    IApplicationDbContext dbContext)
     : ICommandHandler<RegisterUserCommand, RegisterUserResponse>
 {
     public async ValueTask<RegisterUserResponse> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -49,6 +51,27 @@ public class RegisterUserCommandHandler(UserManager<ApplicationUser> userManager
             Email = user.Email,
             Origin = command.Origin ?? string.Empty
         });
+        
+        // await dbContext.ExecuteTransactionalAsync(async () =>
+        // {
+        //     var result = await userManager.CreateAsync(user, command.Password);
+        //     if (!result.Succeeded)
+        //     {
+        //         var errors = result.Errors.Select(error => error.Description).ToList();
+        //         throw new CustomException("Unable to register the user.", errors, HttpStatusCode.BadRequest);
+        //     }
+        //
+        //     await userManager.AddToRoleAsync(user, RoleConstants.Basic);
+        //
+        //     await bus.Defer(
+        //         TimeSpan.FromMinutes(2),
+        //         new SendConfirmationEmailEvent
+        //     {
+        //         UserId = user.Id,
+        //         Email = user.Email,
+        //         Origin = command.Origin ?? string.Empty
+        //     });
+        // }, cancellationToken);
         
         return new RegisterUserResponse(user.Id);
     }

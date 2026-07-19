@@ -7,6 +7,7 @@ using HubManagement.Application.Features.Identities.Users.GetUserPermissions;
 using HubManagement.Application.Features.Identities.Users.RegisterUser;
 using HubManagement.Application.Features.Identities.Users.ResendConfirmationEmail;
 using HubManagement.Application.Features.Identities.Users.ResetPassword;
+using HubManagement.Application.Features.Identities.Users.ToggleStatus;
 using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,7 @@ public class IdentityEndpoints : IMinimalEndpointDefinition
         group.MapResetPasswordEndpoint();
         group.MapResendConfirmationEmailEndpoint();
         group.MapGetCurrentUserPermissionsEndpoint();
+        group.MapToggleUserStatusEndpoint();
 
         return builder;
     }
