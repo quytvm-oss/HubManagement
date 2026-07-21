@@ -1,10 +1,8 @@
-﻿using Mediator;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using HubManagement.Application.Features.Identities.Users.ResendConfirmationEmail;
+using Mediator;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Identities.Users.ResendConfirmationEmail;
+namespace HubManagement.WebApi.Endpoints.Identity;
 
 public static class ResendConfirmationEmailEndpoint
 {

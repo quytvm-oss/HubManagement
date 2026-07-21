@@ -1,15 +1,13 @@
 using HubManagement.Application.DTOs;
+using HubManagement.Application.Features.Identities.Tokens.TokenGeneration;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Identities.Tokens.TokenGeneration;
+namespace HubManagement.WebApi.Endpoints.Identity;
 
-internal static class GenerateTokenEndpoint
+public static class GenerateTokenEndpoint
 {
     public static RouteHandlerBuilder MapGenerateToken(this IEndpointRouteBuilder builder)
     {

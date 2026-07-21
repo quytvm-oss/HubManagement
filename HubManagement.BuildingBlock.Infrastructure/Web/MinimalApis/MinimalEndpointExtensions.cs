@@ -51,7 +51,7 @@ public static class MinimalEndpointExtensions
 
         foreach (var endpoint in endpoints)
         {
-            endpoint.MapEndpoint(apiGroup);
+            endpoint.MapEndpoints(apiGroup);
         }
 
         return builder;

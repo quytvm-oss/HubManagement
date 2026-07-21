@@ -1,10 +1,8 @@
-﻿using Mediator;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using HubManagement.Application.Features.Identities.Users.ResetPassword;
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Identities.Users.ResetPassword;
+namespace HubManagement.WebApi.Endpoints.Identity;
 
 public static class ResetPasswordEndpoint
 {

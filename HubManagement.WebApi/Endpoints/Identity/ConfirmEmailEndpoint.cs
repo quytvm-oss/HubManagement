@@ -1,9 +1,7 @@
-﻿using Mediator;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+﻿using HubManagement.Application.Features.Identities.Users.ConfirmEmail;
+using Mediator;
 
-namespace HubManagement.Application.Features.Identities.Users.ConfirmEmail;
+namespace HubManagement.WebApi.Endpoints.Identity;
 
 public static class ConfirmEmailEndpoint
 {

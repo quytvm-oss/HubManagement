@@ -1,12 +1,9 @@
-﻿using HubManagement.BuildingBlock.Infrastructure.Authorization;
+﻿using HubManagement.Application.Features.Identities.Users.ToggleStatus;
 using Mediator;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Identities.Users.ToggleStatus;
+namespace HubManagement.WebApi.Endpoints.Identity;
 
 public static class ToggleUserStatusEndpoint
 {

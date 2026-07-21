@@ -1,12 +1,10 @@
 ﻿using System.Security.Claims;
+using HubManagement.Application.Features.Identities.Users.GetUserPermissions;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using Mediator;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
-namespace HubManagement.Application.Features.Identities.Users.GetUserPermissions;
+namespace HubManagement.WebApi.Endpoints.Identity;
 
 public static class GetUserPermissionsEndpoint
 {
