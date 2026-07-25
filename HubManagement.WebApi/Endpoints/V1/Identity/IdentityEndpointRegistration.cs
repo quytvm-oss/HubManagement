@@ -1,6 +1,6 @@
 ﻿using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 
-namespace HubManagement.WebApi.Endpoints.Identity;
+namespace HubManagement.WebApi.Endpoints.V1.Identity;
 
 public class IdentityEndpointRegistration : IMinimalEndpointDefinition
 {

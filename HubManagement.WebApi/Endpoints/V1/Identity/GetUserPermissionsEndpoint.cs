@@ -4,7 +4,7 @@ using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using Mediator;
 
-namespace HubManagement.WebApi.Endpoints.Identity;
+namespace HubManagement.WebApi.Endpoints.V1.Identity;
 
 public static class GetUserPermissionsEndpoint
 {

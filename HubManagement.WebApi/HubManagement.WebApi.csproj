@@ -24,4 +24,8 @@
       <ProjectReference Include="..\HubManagement.Infrastructure\HubManagement.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Endpoints\V1\" />
+    </ItemGroup>
+
 </Project>

@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Rebus.Handlers;
 using Serilog;
 
-namespace HubManagement.Application.IntegrationEventHandlers;
+namespace HubManagement.Application.EventHandlers.IntegrationEvents;
 
 public class SendConfirmationEmailEventHandler(ILogger logger, 
     IApplicationDbContext dbContext, 
@@ -23,6 +23,7 @@ public class SendConfirmationEmailEventHandler(ILogger logger,
 
     public async Task Handle(SendConfirmationEmailEvent message)
     {
+        
         if (string.IsNullOrEmpty(message.Email))
         {
             return;

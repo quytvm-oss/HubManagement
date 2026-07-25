@@ -2,7 +2,7 @@
 using Mediator;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace HubManagement.WebApi.Endpoints.Identity;
+namespace HubManagement.WebApi.Endpoints.V1.Identity;
 
 public static class ResendConfirmationEmailEndpoint
 {

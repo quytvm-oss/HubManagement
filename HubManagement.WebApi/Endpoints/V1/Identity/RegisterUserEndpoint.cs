@@ -2,7 +2,7 @@ using HubManagement.Application.Features.Identities.Users.RegisterUser;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HubManagement.WebApi.Endpoints.Identity;
+namespace HubManagement.WebApi.Endpoints.V1.Identity;
 
 public static class RegisterUserEndpoint
 {

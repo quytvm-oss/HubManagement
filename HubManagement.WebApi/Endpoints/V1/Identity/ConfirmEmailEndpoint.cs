@@ -1,7 +1,7 @@
 ﻿using HubManagement.Application.Features.Identities.Users.ConfirmEmail;
 using Mediator;
 
-namespace HubManagement.WebApi.Endpoints.Identity;
+namespace HubManagement.WebApi.Endpoints.V1.Identity;
 
 public static class ConfirmEmailEndpoint
 {
