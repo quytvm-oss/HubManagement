@@ -50,7 +50,7 @@ public static class PersistenceExtensions
                 options.EnableSensitiveDataLogging();
                 options.EnableDetailedErrors();
             }
-            options.AddInterceptors(sp.GetRequiredService<ISaveChangesInterceptor>());
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
         });
         
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
