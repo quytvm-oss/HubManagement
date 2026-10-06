@@ -27,14 +27,16 @@ public static class DeviceTypeClassifier
 
         var normalized = deviceFamily.ToLowerInvariant();
 
-        if (MobileKeywords.Any(keyword => normalized.Contains(keyword, StringComparison.Ordinal)))
-        {
-            return Mobile;
-        }
-
+        // A device family can contain both "Android" and "Tablet"; classify the more
+        // specific tablet category before the broader mobile keywords.
         if (TabletKeywords.Any(keyword => normalized.Contains(keyword, StringComparison.Ordinal)))
         {
             return Tablet;
+        }
+
+        if (MobileKeywords.Any(keyword => normalized.Contains(keyword, StringComparison.Ordinal)))
+        {
+            return Mobile;
         }
 
         return Desktop;

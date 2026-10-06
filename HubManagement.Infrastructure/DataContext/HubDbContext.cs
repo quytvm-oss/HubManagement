@@ -56,8 +56,12 @@ public class HubDbContext(
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(HubDbContext).Assembly);
     }
     
-    public async Task ExecuteTransactionalAsync(Func<Task> operation, CancellationToken cancellationToken = default)
+    public async Task ExecuteInTransactionAsync(
+        Func<CancellationToken, Task> operation,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(operation);
+
         await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
 
         using var scope = new RebusTransactionScope();
@@ -67,7 +71,7 @@ public class HubDbContext(
 
         try
         {
-            await operation();
+            await operation(cancellationToken);
 
             await scope.CompleteAsync();
             await transaction.CommitAsync(cancellationToken);

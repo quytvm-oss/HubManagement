@@ -50,27 +50,6 @@ public class RegisterUserCommandHandler(UserManager<ApplicationUser> userManager
             Origin = command.Origin ?? string.Empty
         });
         
-        // await dbContext.ExecuteTransactionalAsync(async () =>
-        // {
-        //     var result = await userManager.CreateAsync(user, command.Password);
-        //     if (!result.Succeeded)
-        //     {
-        //         var errors = result.Errors.Select(error => error.Description).ToList();
-        //         throw new CustomException("Unable to register the user.", errors, HttpStatusCode.BadRequest);
-        //     }
-        //
-        //     await userManager.AddToRoleAsync(user, RoleConstants.Basic);
-        //
-        //     await bus.Defer(
-        //         TimeSpan.FromMinutes(2),
-        //         new SendConfirmationEmailEvent
-        //     {
-        //         UserId = user.Id,
-        //         Email = user.Email,
-        //         Origin = command.Origin ?? string.Empty
-        //     });
-        // }, cancellationToken);
-        
         return new RegisterUserResponse(user.Id);
     }
     

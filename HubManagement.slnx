@@ -13,5 +13,6 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Architecture.Tests/Architecture.Tests.csproj" />
+    <Project Path="HubManagement.Application.UnitTests/HubManagement.Application.UnitTests.csproj" />
   </Folder>
 </Solution>

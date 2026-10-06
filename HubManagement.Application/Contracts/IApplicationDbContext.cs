@@ -14,8 +14,10 @@ public interface IApplicationDbContext
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     
     /// <summary>
-    /// Chạy <paramref name="operation"/> trong 1 DB transaction, đảm bảo mọi
-    /// SaveChanges + message publish (nếu có) bên trong đều atomic với nhau.
+    /// Runs <paramref name="operation"/> in a database transaction. Messages sent through
+    /// the Rebus outbox participate in the same transaction.
     /// </summary>
-    Task ExecuteTransactionalAsync(Func<Task> operation, CancellationToken cancellationToken = default);
+    Task ExecuteInTransactionAsync(
+        Func<CancellationToken, Task> operation,
+        CancellationToken cancellationToken = default);
 }
