@@ -8,12 +8,16 @@
 
     <ItemGroup>
       <ProjectReference Include="..\HubManagement.BuildingBlock.Core\HubManagement.BuildingBlock.Core.csproj" />
-      <ProjectReference Include="..\HubManagement.BuildingBlock.Infrastructure\HubManagement.BuildingBlock.Infrastructure.csproj" />
       <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+      <PackageReference Include="Rebus" Version="8.9.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>

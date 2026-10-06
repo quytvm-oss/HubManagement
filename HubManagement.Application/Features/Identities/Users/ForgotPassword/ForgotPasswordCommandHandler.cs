@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using HubManagement.BuildingBlock.Core.Exceptions;
-using HubManagement.BuildingBlock.Infrastructure.Mailing;
-using HubManagement.BuildingBlock.Infrastructure.Mailing.Abstractions;
-using HubManagement.BuildingBlock.Infrastructure.Web.Origin;
+using HubManagement.BuildingBlock.Core.Mailing;
+using HubManagement.BuildingBlock.Core.Options;
 using HubManagement.Domain.Entities;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +31,7 @@ public class ForgotPasswordCommandHandler(
         // reset email; an unknown or email-less account silently no-ops with the same 200.
         if (user is null || string.IsNullOrWhiteSpace(user.Email))
         {
-            throw new NotFoundException("User with email is not found.");
+            return "If the account exists, a password reset email has been sent.";
         }
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
@@ -57,6 +55,6 @@ public class ForgotPasswordCommandHandler(
 
         await mailService.SendAsync(mailRequest, cancellationToken);
         
-        return "Password reset email sent.";
+        return "If the account exists, a password reset email has been sent.";
     }
 }

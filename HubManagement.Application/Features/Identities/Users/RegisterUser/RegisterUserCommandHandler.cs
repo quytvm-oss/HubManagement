@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using HubManagement.Application.Constants;
-using HubManagement.Application.Contracts;
 using HubManagement.Application.IntegrationEvents;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.Domain.Entities;
@@ -10,8 +9,7 @@ using Rebus.Bus;
 
 namespace HubManagement.Application.Features.Identities.Users.RegisterUser;
 
-public class RegisterUserCommandHandler(UserManager<ApplicationUser> userManager, IBus bus, 
-    IApplicationDbContext dbContext)
+public class RegisterUserCommandHandler(UserManager<ApplicationUser> userManager, IBus bus)
     : ICommandHandler<RegisterUserCommand, RegisterUserResponse>
 {
     public async ValueTask<RegisterUserResponse> Handle(RegisterUserCommand command, CancellationToken cancellationToken)

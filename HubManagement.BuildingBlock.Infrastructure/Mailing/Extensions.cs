@@ -1,4 +1,4 @@
-﻿using HubManagement.BuildingBlock.Infrastructure.Mailing.Abstractions;
+using HubManagement.BuildingBlock.Core.Mailing;
 using HubManagement.BuildingBlock.Infrastructure.Mailing.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +21,7 @@ public static class Extensions
             services.AddTransient<IMailService>(sp => new SmtpMailService(sp.GetRequiredService<IOptions<MailOptions>>(),
                 sp.GetRequiredService<ILogger<SmtpMailService>>()));
         }
-        
+
         return services;
     }
 }

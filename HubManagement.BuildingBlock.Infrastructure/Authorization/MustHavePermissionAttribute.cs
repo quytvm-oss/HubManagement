@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
+using HubManagement.BuildingBlock.Core.Authorization;
+
 namespace HubManagement.BuildingBlock.Infrastructure.Authorization;
 
 public class MustHavePermissionAttribute : AuthorizeAttribute

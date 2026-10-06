@@ -1,4 +1,4 @@
-﻿namespace HubManagement.BuildingBlock.Infrastructure.Web.Origin;
+namespace HubManagement.BuildingBlock.Core.Options;
 
 public sealed class OriginOptions
 {

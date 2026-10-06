@@ -24,7 +24,7 @@ public class ChangePasswordCommandHandler(ICurrentUser currentUser, UserManager<
 
         _ = user ?? throw new NotFoundException("user not found");
 
-        var result = await userManager.ChangePasswordAsync(user, command.Password, command.ConfirmNewPassword);
+        var result = await userManager.ChangePasswordAsync(user, command.Password, command.NewPassword);
 
         if (!result.Succeeded)
         {
@@ -32,6 +32,6 @@ public class ChangePasswordCommandHandler(ICurrentUser currentUser, UserManager<
             throw new CustomException("failed to change password", errors);
         }
         
-        return "password reset email sent";
+        return "Password changed successfully.";
     }
 }

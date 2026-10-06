@@ -1,5 +1,6 @@
 ﻿using HubManagement.Application.Constants;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
+using HubManagement.BuildingBlock.Core.Authorization;
 
 namespace HubManagement.Infrastructure.SeedData;
 

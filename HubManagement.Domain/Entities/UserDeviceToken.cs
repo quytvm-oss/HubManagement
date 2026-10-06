@@ -6,11 +6,11 @@ public class UserDeviceToken
     
     public long UserId { get; set; }
 
-    public string Token { get; set; }
+    public string Token { get; set; } = string.Empty;
 
-    public string Platform { get; set; }
+    public string Platform { get; set; } = string.Empty;
     
-    public ApplicationUser ApplicationUser { get; set; }
+    public ApplicationUser ApplicationUser { get; set; } = null!;
     
     public DateTime CreatedAt { get; set; }
     

@@ -1,4 +1,5 @@
 ﻿using HubManagement.BuildingBlock.Infrastructure.FileStorage.Local;
+using HubManagement.BuildingBlock.Core.FileStorage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

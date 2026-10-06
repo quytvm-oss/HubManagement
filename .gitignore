@@ -4,3 +4,5 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 HubManagement.WebApi/logs
+HubManagement.WebApi/Configurations/appsettings.Local.json
+HubManagement.WebApi/storage/

@@ -3,20 +3,18 @@ using System.Text;
 using HubManagement.Application.Contracts;
 using HubManagement.Application.IntegrationEvents;
 using HubManagement.BuildingBlock.Core.Exceptions;
-using HubManagement.BuildingBlock.Infrastructure.Mailing;
-using HubManagement.BuildingBlock.Infrastructure.Mailing.Abstractions;
+using HubManagement.BuildingBlock.Core.Mailing;
 using HubManagement.Domain.Entities;
 using HubManagement.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Rebus.Handlers;
-using Serilog;
 
 namespace HubManagement.Application.EventHandlers.IntegrationEvents;
 
-public class SendConfirmationEmailEventHandler(ILogger logger, 
-    IApplicationDbContext dbContext, 
+public class SendConfirmationEmailEventHandler(
+    IApplicationDbContext dbContext,
     UserManager<ApplicationUser> userManager,
     IMailService mailService) : IHandleMessages<SendConfirmationEmailEvent>
 {

@@ -18,4 +18,13 @@
         <Using Include="Xunit"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\HubManagement.Application\HubManagement.Application.csproj" />
+      <ProjectReference Include="..\HubManagement.BuildingBlock.Core\HubManagement.BuildingBlock.Core.csproj" />
+      <ProjectReference Include="..\HubManagement.BuildingBlock.Infrastructure\HubManagement.BuildingBlock.Infrastructure.csproj" />
+      <ProjectReference Include="..\HubManagement.Domain\HubManagement.Domain.csproj" />
+      <ProjectReference Include="..\HubManagement.Infrastructure\HubManagement.Infrastructure.csproj" />
+      <ProjectReference Include="..\HubManagement.WebApi\HubManagement.WebApi.csproj" />
+    </ItemGroup>
+
 </Project>

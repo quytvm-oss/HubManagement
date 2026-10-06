@@ -22,7 +22,7 @@ public class ApplicationUser :  IdentityUser<Guid>, IHasDomainEvents
     public DateTime LastPasswordChangeDateTime { get; set; } = TimeProvider.System.GetUtcNow().UtcDateTime;
     
     //navigation
-    public virtual ICollection<UserDeviceToken> UserDeviceTokens { get; set; }
+    public virtual ICollection<UserDeviceToken> UserDeviceTokens { get; set; } = [];
     
     private readonly List<IDomainEvent> _domainEvents = [];
     

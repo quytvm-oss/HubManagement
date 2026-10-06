@@ -6,6 +6,7 @@ using HubManagement.BuildingBlock.Infrastructure.FileStorage;
 using HubManagement.BuildingBlock.Infrastructure.Messaging;
 using HubManagement.BuildingBlock.Infrastructure.Web.MinimalApis;
 using HubManagement.Infrastructure.Installers;
+using HubManagement.WebApi.Endpoints.V1.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +17,16 @@ builder.Configuration
     .AddJsonFile(
         $"Configurations/appsettings.{builder.Environment.EnvironmentName}.json",
         true,
-        true)
-    .AddEnvironmentVariables();
+        true);
 
-// Serialize enums as string names (reads still accept names or integers). [Flags] enums (AuditTag, BodyCapture)
-// opt back to numeric via their own NumericEnumConverter since comma-joined flag strings break bitwise consumers. Frontends mirror this as string unions.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>(optional: true);
+}
+
+builder.Configuration.AddEnvironmentVariables();
+
+// Keep API enum values stable and readable for clients.
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -61,7 +67,7 @@ builder.Services.AddHeroMessaging<IHubManagementApplicationMaker>(builder.Config
 builder.Services.AddBackgroundJob();
 
 builder.Services.AddMinimalEndpoints(
-    typeof(IHubManagementApplicationMaker).Assembly
+    typeof(IdentityEndpointRegistration).Assembly
 );
 
 builder.Services.AddStorage(builder.Configuration);
@@ -76,8 +82,12 @@ app.UsePlatform();
 
 app.MapMinimalEndpoints();
 
-using (var scope = app.Services.CreateScope())
+var migrateOnStartup = app.Environment.IsDevelopment()
+                       || app.Configuration.GetValue<bool>("Database:MigrateOnStartup");
+
+if (migrateOnStartup)
 {
+    using var scope = app.Services.CreateScope();
     var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
     await initializer.MigrateAsync(CancellationToken.None);
     await initializer.SeedAsync(CancellationToken.None);

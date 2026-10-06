@@ -1,4 +1,5 @@
 ﻿using HealthChecks.Redis;
+using HubManagement.BuildingBlock.Core.Options;
 using HubManagement.BuildingBlock.Infrastructure.Cache;
 using HubManagement.BuildingBlock.Infrastructure.Logging;
 using HubManagement.BuildingBlock.Infrastructure.Mailing;
@@ -7,7 +8,6 @@ using HubManagement.BuildingBlock.Infrastructure.Web.Cors;
 using HubManagement.BuildingBlock.Infrastructure.Web.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Web.Mediator.Behaviors;
 using HubManagement.BuildingBlock.Infrastructure.Web.OpenApi;
-using HubManagement.BuildingBlock.Infrastructure.Web.Origin;
 using HubManagement.BuildingBlock.Infrastructure.Web.Security;
 using HubManagement.BuildingBlock.Infrastructure.Web.Versioning;
 using Mediator;

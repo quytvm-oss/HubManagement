@@ -35,7 +35,7 @@ public class ToggleUserStatusCommandHandler(UserManager<ApplicationUser> userMan
         }
         else
         {
-            targetUser.Deactivate(actor.ToString(), "Status toggled by administrator");
+            targetUser.Deactivate(actor.Id.ToString(), "Status toggled by administrator");
         }
         
         var result = await userManager.UpdateAsync(targetUser);

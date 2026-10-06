@@ -17,7 +17,7 @@ public class GetManyQuery
 
     public int? PageSize { get; set; } = 20;
 
-    public string OrderColumn { get; set; }
+    public string OrderColumn { get; set; } = string.Empty;
 
     public string OrderDirection { get; set; } = "desc";
 

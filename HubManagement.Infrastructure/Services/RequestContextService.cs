@@ -1,5 +1,5 @@
 ﻿using HubManagement.Application.Services;
-using HubManagement.BuildingBlock.Infrastructure.Web.Origin;
+using HubManagement.BuildingBlock.Core.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 

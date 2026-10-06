@@ -1,6 +1,6 @@
 ﻿using System.Buffers;
 using System.Text.RegularExpressions;
-using HubManagement.BuildingBlock.Infrastructure.FileStorage.Dtos;
+using HubManagement.BuildingBlock.Core.FileStorage;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;

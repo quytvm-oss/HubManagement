@@ -1,4 +1,4 @@
-using HubManagement.BuildingBlock.Infrastructure.Mailing.Abstractions;
+using HubManagement.BuildingBlock.Core.Mailing;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
@@ -26,7 +26,7 @@ public class SmtpMailService : IMailService
         {
             throw new InvalidOperationException("SMTP host is not configured");
         }
-        
+
         var email = new MimeMessage();
         ConfigureSender(email, request);
         AddMetadata(email, request);
@@ -40,7 +40,7 @@ public class SmtpMailService : IMailService
             request.From ?? _settings.From ?? throw new InvalidOperationException("From is not configured");
         email.From.Add(new MailboxAddress(_settings.DisplayName, fromAddress));
         email.Sender = new MailboxAddress(request.DisplayName ?? _settings.DisplayName, fromAddress);
-        
+
         foreach (string address in request.To.Where(x => !string.IsNullOrWhiteSpace(x)))
         {
             email.To.Add(MailboxAddress.Parse(address.Trim()));
@@ -67,7 +67,7 @@ public class SmtpMailService : IMailService
             }
         }
     }
-    
+
     private void AddMetadata(MimeMessage email, MailRequest request)
     {
         if (request?.Headers is not null)
@@ -101,7 +101,7 @@ public class SmtpMailService : IMailService
                 await builder.Attachments.AddAsync(attachment.Key, stream, ct);
             }
         }
-        
+
         email.Body = builder.ToMessageBody();
     }
 

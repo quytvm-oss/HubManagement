@@ -1,12 +1,12 @@
 ﻿using HubManagement.Application.Constants;
 using HubManagement.Application.Contracts;
 using HubManagement.BuildingBlock.Core.Abstractions;
+using HubManagement.BuildingBlock.Core.Authorization;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using HubManagement.Domain.Entities;
 using HubManagement.Infrastructure.SeedData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace HubManagement.Infrastructure.DataContext;
@@ -17,8 +17,7 @@ public class HubDbInitializer(
     RoleManager<ApplicationRole> roleManager,
     UserManager<ApplicationUser> userManager,
     IApplicationDbContext db,
-    TimeProvider timeProvider,
-    IConfiguration configuration) : IDbInitializer
+    TimeProvider timeProvider) : IDbInitializer
 {
     public async Task MigrateAsync(CancellationToken cancellationToken)
     {
