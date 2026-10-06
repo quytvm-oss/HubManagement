@@ -11,6 +11,8 @@ public interface IApplicationDbContext
     
     DbSet<EmailTemplate> EmailTemplates { get; }
 
+    DbSet<ApplicationRoleClaim> RoleClaims { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using HubManagement.Application.DTOs;
+using HubManagement.Application.Contracts;
 using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
@@ -15,7 +16,7 @@ namespace HubManagement.Infrastructure.Services;
 internal sealed class UserService(
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
-    HubDbContext db,
+    IApplicationDbContext db,
     ICacheService cache) : IUserService
 {
     public async Task<bool> ExistsWithEmailAsync(string email, Guid? exceptId = null, CancellationToken ct = default)

@@ -40,7 +40,7 @@ public class HubDbContext(
     public DbSet<UserDeviceToken> UserDeviceTokens => Set<UserDeviceToken>();
 
     public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
-    
+
     /// <summary>
     /// Configures the model and its relationships by applying global filters, tenant isolation,
     /// and other customization logic during the model creation stage of the database context.
