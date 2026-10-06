@@ -14,6 +14,7 @@ public static class PermissionConstant
         public const string Delete = $"Permissions.{Resource}.Delete";
         public const string Export = $"Permissions.{Resource}.Export";
         public const string ManageRoles = $"Permissions.{Resource}.ManageRoles";
+        public const string ConfirmEmail = $"Permissions.{Resource}.ConfirmEmail";
     }
 
     public static class UserRoles

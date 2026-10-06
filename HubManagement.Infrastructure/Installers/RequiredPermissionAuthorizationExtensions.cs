@@ -12,7 +12,7 @@ public static class RequiredPermissionDefaults
 
 public static class AuthenticationConstants
 {
-    public const string AuthenticationScheme = "Bearer";
+    public const string AuthenticationScheme = BffAuthenticationDefaults.Scheme;
 }
 
 public static class RequiredPermissionAuthorizationExtensions

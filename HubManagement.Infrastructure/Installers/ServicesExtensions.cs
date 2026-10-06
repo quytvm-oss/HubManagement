@@ -33,6 +33,8 @@ public static class ServicesExtensions
                 failureStatus: HealthStatus.Unhealthy);
         services.AddScoped<IDbInitializer, HubDbInitializer>();
         services.AddScoped<IApplicationDbContext, HubDbContext>();
+        // Kept for internal mediator handlers and possible server-to-server token exchange.
+        // Browser clients authenticate exclusively through the BFF cookie endpoints.
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
         

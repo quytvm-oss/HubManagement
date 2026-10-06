@@ -44,7 +44,6 @@ if (builder.Environment.IsProduction())
 
     var config = builder.Configuration;
     Require(config, "PostGreSqlSetting:ConnectionString");
-    Require(config, "JwtOptions:SigningKey");
 }
 
 builder.Services.AddMediator(o =>
@@ -74,7 +73,7 @@ builder.Services.AddStorage(builder.Configuration);
 builder.Services.ServicesRegisterExtensions();
 builder.Services.AddPersistence(builder.Configuration);
 
-builder.Services.ConfigureJwtAuth();
+builder.Services.ConfigureBffAuthentication();
 
 var app = builder.Build();
 

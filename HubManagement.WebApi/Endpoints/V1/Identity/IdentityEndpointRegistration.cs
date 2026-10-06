@@ -8,10 +8,13 @@ public class IdentityEndpointRegistration : IMinimalEndpointDefinition
     {
         var group = builder
             .MapGroup("/identity")
-            .WithTags("Identity");
+            .WithTags("Identity")
+            .AddEndpointFilter<HubManagement.WebApi.Authentication.BffAntiforgeryFilter>();
 
-        group.MapGenerateToken();
-        group.MapRefreshTokenEndpoint();
+        group.MapCsrfTokenEndpoint();
+        group.MapBffLoginEndpoint();
+        group.MapBffSessionEndpoint();
+        group.MapBffLogoutEndpoint();
         group.MapRegisterUserEndpoint();
         group.MapConfirmEmailEndpoint();
         group.MapForgotPasswordEndpoint();

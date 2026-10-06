@@ -1,5 +1,7 @@
 ﻿using HubManagement.Application.Features.Identities.Users.ResendConfirmationEmail;
 using Mediator;
+using HubManagement.Application.Constants;
+using HubManagement.BuildingBlock.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HubManagement.WebApi.Endpoints.V1.Identity;
@@ -11,7 +13,7 @@ public static class ResendConfirmationEmailEndpoint
         return endpoints.MapPost("/users/{id:guid}/resend-confirmation-email", Handler)
             .WithName("ResendConfirmationEmail")
             .WithSummary("Resend a user's email confirmation (admin)")
-            .AllowAnonymous()
+            .RequirePermission(PermissionConstant.Users.ConfirmEmail)
             .WithDescription("Re-sends the email-confirmation link to a user who has not confirmed their address yet.")
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status401Unauthorized)

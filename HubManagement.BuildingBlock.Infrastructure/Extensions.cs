@@ -139,6 +139,7 @@ public static class Extensions
         app.UseAuthentication();
 
         app.UseAuthorization();
+        app.UseAntiforgery();
         return app;
     }
     

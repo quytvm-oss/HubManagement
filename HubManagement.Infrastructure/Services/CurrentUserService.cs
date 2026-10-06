@@ -2,34 +2,37 @@
 using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Exceptions;
 using HubManagement.BuildingBlock.Infrastructure.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace HubManagement.Infrastructure.Services;
 
-public class CurrentUserService : ICurrentUserService
+public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
     private ClaimsPrincipal? _user;
+
+    private ClaimsPrincipal? User => _user ?? httpContextAccessor.HttpContext?.User;
     
-    public string? Name => _user?.Identity?.Name;
+    public string? Name => User?.Identity?.Name;
     
     private Guid _userId = Guid.Empty;
     
     public Guid GetUserId()
     {
         return IsAuthenticated() ?
-            Guid.Parse(_user?.GetUserId() ?? Guid.Empty.ToString()) : _userId;
+            Guid.Parse(User?.GetUserId() ?? Guid.Empty.ToString()) : _userId;
     }
 
     public string? GetUserEmail()
-        => IsAuthenticated() ? _user!.GetEmail() : string.Empty;
+        => IsAuthenticated() ? User!.GetEmail() : string.Empty;
 
     public bool IsAuthenticated()
-        => _user?.Identity?.IsAuthenticated is true;
+        => User?.Identity?.IsAuthenticated is true;
 
     public bool IsInRole(string role)
-        => _user?.IsInRole(role) is true;
+        => User?.IsInRole(role) is true;
 
     public IEnumerable<Claim>? GetUserClaims()
-        => _user?.Claims;
+        => User?.Claims;
 
     public void SetCurrentUser(ClaimsPrincipal user)
     {
