@@ -2,7 +2,9 @@
 using HubManagement.Application.Helpers;
 using HubManagement.Application.Services;
 using HubManagement.BuildingBlock.Core.Abstractions;
+using HubManagement.BuildingBlock.Infrastructure.Cache.Abstractions;
 using HubManagement.Domain.Entities;
+using HubManagement.Infrastructure.Authorization;
 using HubManagement.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,6 +15,7 @@ namespace HubManagement.Infrastructure.Services;
 public class SessionService(
     HubDbContext db,
     ICurrentUser currentUser,
+    ICacheService cache,
     ILogger<SessionService> logger,
     TimeProvider timeProvider)
     : ISessionService
@@ -38,6 +41,8 @@ public class SessionService(
         db.UserSessions.Add(session);
         
         await db.SaveChangesAsync(cancellationToken);
+
+        await CacheSessionAsync(session, cancellationToken);
         
         if (logger.IsEnabled(LogLevel.Information))
         {
@@ -143,6 +148,7 @@ public class SessionService(
         session.Revoke(revokedBy,reason ?? "User requested");
         
         await db.SaveChangesAsync(cancellationToken);
+        await RemoveSessionFromCacheAsync(session.Id, cancellationToken);
         if (logger.IsEnabled(LogLevel.Information))
         {
             logger.LogInformation("Session {SessionId} revoked by {RevokedBy}", sessionId, revokedBy);
@@ -174,6 +180,8 @@ public class SessionService(
 
         await db.SaveChangesAsync(cancellationToken);
 
+        await RemoveSessionsFromCacheAsync(sessions, cancellationToken);
+
         if (logger.IsEnabled(LogLevel.Information))
         {
             logger.LogInformation("Revoked {Count} sessions for user {UserId}", sessions.Count, userId);
@@ -196,6 +204,8 @@ public class SessionService(
         }
 
         await db.SaveChangesAsync(cancellationToken);
+
+        await RemoveSessionsFromCacheAsync(sessions, cancellationToken);
 
         if (logger.IsEnabled(LogLevel.Information))
         {
@@ -221,6 +231,7 @@ public class SessionService(
         session.Revoke(revokedBy, reason ?? "Admin requested");
 
         await db.SaveChangesAsync(cancellationToken);
+        await RemoveSessionFromCacheAsync(session.Id, cancellationToken);
 
         if (logger.IsEnabled(LogLevel.Information))
         {
@@ -254,6 +265,7 @@ public class SessionService(
         {
             session.UpdateRefreshToken(newRefreshTokenHash, newExpiresAt);
             await db.SaveChangesAsync(cancellationToken);
+            await CacheSessionAsync(session, cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
@@ -308,6 +320,35 @@ public class SessionService(
         if (sessionOwnerUserId != currentUser.GetUserId())
         {
             throw new UnauthorizedAccessException("Cannot access sessions for another user.");
+        }
+    }
+
+    private Task CacheSessionAsync(UserSession session, CancellationToken cancellationToken)
+    {
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        if (session.IsRevoked || session.ExpiresAt <= now)
+        {
+            return RemoveSessionFromCacheAsync(session.Id, cancellationToken);
+        }
+
+        var entry = new SessionValidationCacheEntry(session.UserId, session.ExpiresAt);
+        return cache.SetItemAsync(
+            SessionValidationCache.Key(session.Id),
+            entry,
+            session.ExpiresAt - now,
+            cancellationToken);
+    }
+
+    private Task RemoveSessionFromCacheAsync(Guid sessionId, CancellationToken cancellationToken) =>
+        cache.RemoveItemAsync(SessionValidationCache.Key(sessionId), cancellationToken);
+
+    private async Task RemoveSessionsFromCacheAsync(
+        IEnumerable<UserSession> sessions,
+        CancellationToken cancellationToken)
+    {
+        foreach (var session in sessions)
+        {
+            await RemoveSessionFromCacheAsync(session.Id, cancellationToken);
         }
     }
     

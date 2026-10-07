@@ -77,9 +77,9 @@ builder.Services.ConfigureBffAuthentication();
 
 var app = builder.Build();
 
-app.UsePlatform();
-
 app.MapMinimalEndpoints();
+
+app.UsePlatform();
 
 var migrateOnStartup = app.Environment.IsDevelopment()
                        || app.Configuration.GetValue<bool>("Database:MigrateOnStartup");

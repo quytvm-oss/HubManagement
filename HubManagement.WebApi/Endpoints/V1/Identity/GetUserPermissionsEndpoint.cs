@@ -19,6 +19,7 @@ public static class GetUserPermissionsEndpoint
 
                 return TypedResults.Ok(await mediator.Send(new GetCurrentUserPermissionsQuery(userId), cancellationToken));
             })
+            .RequirePermission("Permissions.Users.Permission")
             .WithName("GetCurrentUserPermissions")
             .WithSummary("Get current user permissions")
             .WithDescription("Retrieve permissions for the authenticated user. Requires authentication only — every signed-in user can read their own grants.")
